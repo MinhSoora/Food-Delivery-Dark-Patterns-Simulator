@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeliverX — Hệ thống vạch trần</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap');
+
+  :root {
+    --bg: #07070d;
+    --bg2: #0f0f1a;
+    --bg3: #161625;
+    --red: #ff2d55;
+    --red-dim: rgba(255,45,85,0.15);
+    --yellow: #ffd60a;
+    --green: #30d158;
+    --green-neon: #39ff14;
+    --blue: #0a84ff;
+    --purple: #bf5af2;
+    --text: #e5e5f0;
+    --text-dim: #6b6b88;
+    --border: rgba(255,255,255,0.06);
+    --corporate: #0a84ff;
+    --driver: #ff453a;
+    --phone-w: 320px;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 28px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--red); }
+  .badge-nda {
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--red-dim);
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 2px;
+    animation: pulse-badge 2s infinite;
+  }
+  @keyframes pulse-badge {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .live-dot {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: blink 1.2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  .live-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 1px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    display: grid;
+    grid-template-columns: var(--phone-w) 1fr;
+    gap: 0;
+    height: calc(100vh - 53px);
+    overflow: hidden;
+  }
+
+  /* ══ LEFT: PHONE ══ */
+  .phone-panel {
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
+  }
+  .phone-frame {
+    width: 270px;
+    height: 560px;
+    background: #1c1c1e;
+    border-radius: 40px;
+    border: 3px solid #3a3a3c;
+    box-shadow:
+      0 0 0 1px #000,
+      0 30px 80px rgba(0,0,0,0.9),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .phone-notch {
+    width: 90px;
+    height: 28px;
+    background: #1c1c1e;
+    border-radius: 0 0 16px 16px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
+  }
+  .phone-screen {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* App screens */
+  .app-screen {
+    position: absolute;
+    inset: 0;
+    background: #f2f2f7;
+    display: none;
+    flex-direction: column;
+    font-family: var(--sans);
+    overflow: hidden;
+  }
+  .app-screen.active { display: flex; }
+
+  /* Screen: Home */
+  .app-topbar {
+    background: #fff;
+    padding: 10px 14px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+  }
+  .app-logo-text {
+    font-weight: 800;
+    font-size: 18px;
+    color: #e8142e;
+  }
+  .app-avatar {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, #ff6b6b, #ee0979);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .app-hero {
+    background: linear-gradient(160deg, #e8142e 0%, #c0002a 100%);
+    padding: 14px;
+    color: #fff;
+  }
+  .app-hero h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .app-hero p { font-size: 10px; opacity: 0.85; }
+
+  .app-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1c1c1e;
+    padding: 10px 14px 6px;
+    letter-spacing: 0.3px;
+  }
+
+  .restaurant-list { padding: 0 14px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1; }
+  .restaurant-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.1s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .restaurant-card:active { transform: scale(0.98); }
+  .rest-img {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: #f5f5f7;
+  }
+  .rest-info { flex: 1; }
+  .rest-name { font-size: 12px; font-weight: 600; color: #1c1c1e; }
+  .rest-meta { font-size: 10px; color: #6b6b72; margin-top: 2px; }
+  .rest-tag {
+    font-size: 9px;
+    background: #fff3cd;
+    color: #7d5d00;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-weight: 600;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  /* Screen: Restaurant */
+  .screen-header {
+    background: #fff;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+  }
+  .back-btn {
+    width: 26px; height: 26px;
+    background: #f2f2f7;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    color: #1c1c1e;
+  }
+  .screen-title { font-size: 13px; font-weight: 700; color: #1c1c1e; }
+
+  .menu-list { padding: 8px 14px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; }
+  .menu-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .menu-item-info .item-name { font-size: 12px; font-weight: 600; color: #1c1c1e; }
+  .menu-item-info .item-desc { font-size: 9px; color: #8e8e93; margin-top: 2px; }
+  .item-price { font-size: 13px; font-weight: 700; color: #e8142e; }
+  .add-btn {
+    background: #e8142e;
+    color: #fff;
+    border: none;
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+    transition: background 0.15s;
+  }
+  .add-btn:hover { background: #c0002a; }
+
+  /* Screen: Cart */
+  .cart-list { padding: 10px 14px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+  .cart-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .cart-item-name { font-weight: 600; color: #1c1c1e; }
+  .cart-item-price { font-weight: 700; color: #e8142e; }
+
+  .fee-breakdown {
+    background: #fff;
+    margin: 0 14px;
+    border-radius: 12px;
+    padding: 10px 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+  .fee-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #6b6b72;
+    padding: 3px 0;
+  }
+  .fee-row.highlight { color: #1c1c1e; font-weight: 600; }
+  .fee-row.total { font-weight: 800; font-size: 13px; color: #1c1c1e; border-top: 1px solid #f2f2f7; margin-top: 4px; padding-top: 6px; }
+  .fee-tag {
+    font-size: 8px;
+    background: #e5f5ea;
+    color: #1c7a3a;
+    border-radius: 3px;
+    padding: 1px 4px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  .tip-section { padding: 8px 14px; }
+  .tip-label { font-size: 10px; color: #6b6b72; margin-bottom: 6px; }
+  .tip-options { display: flex; gap: 6px; }
+  .tip-btn {
+    flex: 1;
+    padding: 7px 0;
+    background: #f2f2f7;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #1c1c1e;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tip-btn.selected {
+    background: #fff3f5;
+    border-color: #e8142e;
+    color: #e8142e;
+  }
+
+  .priority-section { padding: 0 14px 8px; }
+  .priority-toggle {
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    cursor: pointer;
+  }
+  .priority-left { display: flex; flex-direction: column; gap: 2px; }
+  .priority-name { font-size: 12px; font-weight: 600; color: #1c1c1e; }
+  .priority-sub { font-size: 9px; color: #8e8e93; }
+  .toggle-switch {
+    width: 38px; height: 22px;
+    background: #e5e5ea;
+    border-radius: 11px;
+    position: relative;
+    transition: background 0.2s;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .toggle-switch.on { background: #30d158; }
+  .toggle-knob {
+    width: 18px; height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px; left: 2px;
+    transition: left 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle-switch.on .toggle-knob { left: 18px; }
+
+  .order-btn {
+    margin: 8px 14px;
+    background: #e8142e;
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    width: calc(100% - 28px);
+    transition: background 0.15s, transform 0.1s;
+  }
+  .order-btn:hover { background: #c0002a; }
+  .order-btn:active { transform: scale(0.98); }
+
+  /* Screen: Tracking */
+  .track-map {
+    height: 130px;
+    background: linear-gradient(135deg, #e8f4f8 0%, #d4eaf0 100%);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .map-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,100,180,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,100,180,0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .map-road-h {
+    position: absolute;
+    height: 6px;
+    background: #c8d9e0;
+    border-radius: 3px;
+  }
+  .map-road-v {
+    position: absolute;
+    width: 6px;
+    background: #c8d9e0;
+    border-radius: 3px;
+  }
+  .driver-dot {
+    width: 24px; height: 24px;
+    background: #e8142e;
+    border-radius: 50%;
+    position: absolute;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(232,20,46,0.5);
+    animation: drive 4s ease-in-out infinite;
+    z-index: 5;
+  }
+  @keyframes drive {
+    0% { left: 20%; top: 40%; }
+    25% { left: 40%; top: 30%; }
+    50% { left: 55%; top: 50%; }
+    75% { left: 65%; top: 35%; }
+    100% { left: 20%; top: 40%; }
+  }
+  .dest-pin {
+    position: absolute;
+    right: 20%; top: 30%;
+    font-size: 20px;
+    z-index: 5;
+  }
+
+  .track-info { padding: 10px 14px; }
+  .track-eta { font-size: 22px; font-weight: 800; color: #1c1c1e; }
+  .track-eta span { font-size: 12px; font-weight: 500; color: #6b6b72; margin-left: 4px; }
+  .track-status { font-size: 11px; color: #6b6b72; margin-top: 2px; }
+
+  .driver-card {
+    background: #fff;
+    margin: 6px 14px;
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+  .driver-avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #6c757d, #495057);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .driver-name { font-size: 12px; font-weight: 600; color: #1c1c1e; }
+  .driver-pay-visible { font-size: 10px; color: #30d158; font-weight: 600; }
+
+  .track-steps { padding: 0 14px; flex: 1; overflow-y: auto; }
+  .step { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; }
+  .step-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #d1d1d6;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+  .step-dot.done { background: #30d158; box-shadow: 0 0 6px rgba(48,209,88,0.6); }
+  .step-dot.active { background: #e8142e; animation: blink 1s infinite; }
+  .step-text { font-size: 10px; color: #6b6b72; }
+  .step-text.done { color: #1c1c1e; font-weight: 500; }
+  .step-text.active { color: #e8142e; font-weight: 600; }
+
+  /* ══ RIGHT: DASHBOARD ══ */
+  .dashboard {
+    background: var(--bg);
+    overflow-y: auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .dash-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .dash-title {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .dash-subtitle {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .dash-subtitle span { color: var(--red); }
+
+  .order-counter {
+    text-align: right;
+  }
+  .order-count-num {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--yellow);
+    line-height: 1;
+  }
+  .order-count-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+  }
+
+  /* SECTION */
+  .section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .section-head {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .section-head-title {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-head-title .icon { font-size: 13px; }
+  .section-badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  .badge-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,45,85,0.3); }
+  .badge-yellow { background: rgba(255,214,10,0.12); color: var(--yellow); border: 1px solid rgba(255,214,10,0.3); }
+  .badge-green { background: rgba(48,209,88,0.12); color: var(--green); border: 1px solid rgba(48,209,88,0.3); }
+  .badge-blue { background: rgba(10,132,255,0.12); color: var(--blue); border: 1px solid rgba(10,132,255,0.3); }
+
+  /* MONEY SPLIT */
+  .money-split { padding: 16px; }
+  .split-order-total {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .split-order-total span {
+    color: var(--yellow);
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .split-bar {
+    height: 32px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .split-seg {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 700;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .split-seg.corp {
+    background: linear-gradient(90deg, #0a84ff, #0060cc);
+    color: #fff;
+  }
+  .split-seg.driver {
+    background: linear-gradient(90deg, #ff453a, #c0002a);
+    color: #fff;
+  }
+  .split-seg.fee {
+    background: linear-gradient(90deg, #bf5af2, #9b40cc);
+    color: #fff;
+  }
+  .split-seg.tip {
+    background: linear-gradient(90deg, #ffd60a, #cc9900);
+    color: #000;
+  }
+  .split-legend { display: flex; flex-wrap: wrap; gap: 8px; }
+  .legend-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--text-dim);
+  }
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .legend-dot.corp { background: #0a84ff; }
+  .legend-dot.driver { background: #ff453a; }
+  .legend-dot.fee { background: #bf5af2; }
+  .legend-dot.tip { background: #ffd60a; }
+
+  /* ALGORITHMS GRID */
+  .algo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; }
+  .algo-card {
+    background: var(--bg3);
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .algo-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .algo-card.red::before { background: var(--red); }
+  .algo-card.yellow::before { background: var(--yellow); }
+  .algo-card.blue::before { background: var(--blue); }
+  .algo-card.purple::before { background: var(--purple); }
+  .algo-card-title {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .algo-value {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .algo-sub {
+    font-size: 9px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+  .algo-card.red .algo-value { color: var(--red); }
+  .algo-card.yellow .algo-value { color: var(--yellow); }
+  .algo-card.blue .algo-value { color: var(--blue); }
+  .algo-card.purple .algo-value { color: var(--purple); }
+
+  /* DESPERATION SCORE */
+  .descore-section { padding: 14px 16px; }
+  .descore-driver {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg3);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+  }
+  .descore-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: #2a2a3a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .descore-name { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .descore-meta { font-size: 10px; color: var(--text-dim); font-family: var(--mono); }
+  .descore-score-badge {
+    margin-left: auto;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .score-high { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,45,85,0.3); }
+  .score-low { background: rgba(48,209,88,0.12); color: var(--green); border: 1px solid rgba(48,209,88,0.3); }
+
+  .descore-explanation {
+    background: var(--bg3);
+    border-radius: 10px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--red);
+  }
+  .descore-code {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+  .descore-code .k { color: var(--purple); }
+  .descore-code .s { color: var(--green); }
+  .descore-code .n { color: var(--yellow); }
+  .descore-code .c { color: #636374; }
+  .descore-code .highlight { color: var(--red); font-weight: 700; }
+
+  /* DAY EARNINGS CHART */
+  .earnings-section { padding: 14px 16px; }
+  .earnings-vs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .earns-box {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  .earns-box.company {
+    background: rgba(10,132,255,0.1);
+    border: 1px solid rgba(10,132,255,0.25);
+  }
+  .earns-box.driver {
+    background: rgba(255,69,58,0.1);
+    border: 1px solid rgba(255,69,58,0.25);
+  }
+  .earns-label { font-size: 9px; font-family: var(--mono); color: var(--text-dim); margin-bottom: 4px; letter-spacing: 1px; }
+  .earns-amount {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .earns-box.company .earns-amount { color: var(--blue); }
+  .earns-box.driver .earns-amount { color: var(--driver); }
+  .earns-box .earns-note { font-size: 9px; color: var(--text-dim); margin-top: 3px; }
+
+  .hours-bar-wrap { margin-top: 4px; }
+  .hours-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+  .hours-label { font-family: var(--mono); font-size: 9px; color: var(--text-dim); width: 30px; text-align: right; flex-shrink: 0; }
+  .hours-bar {
+    flex: 1;
+    height: 16px;
+    background: var(--bg3);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .hours-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 6px;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .hours-fill.corp { background: linear-gradient(90deg, #0a84ff80, #0060cc60); color: var(--blue); }
+  .hours-fill.drv { background: linear-gradient(90deg, #ff453a60, #c0002a40); color: var(--driver); }
+
+  /* FEES REVEAL */
+  .fee-reveal { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .fee-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg3);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .fee-item-icon { font-size: 18px; flex-shrink: 0; }
+  .fee-item-body { flex: 1; }
+  .fee-item-name { font-size: 11px; font-weight: 600; margin-bottom: 2px; }
+  .fee-item-desc { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
+  .fee-item-amount {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .fee-item-amount.red { color: var(--red); }
+  .fee-item-amount.green { color: var(--green); }
+
+  /* RUNNING STATS */
+  .running-stats {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--yellow);
+    line-height: 1;
+  }
+  .stat-label { font-size: 9px; color: var(--text-dim); margin-top: 3px; font-family: var(--mono); }
+
+  /* PRIORITY SCAM REVEAL */
+  .priority-reveal { padding: 14px 16px; }
+  .priority-compare {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .prio-box {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    text-align: center;
+  }
+  .prio-box-label { font-size: 10px; font-weight: 600; margin-bottom: 6px; }
+  .prio-time {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--yellow);
+  }
+  .prio-time-sub { font-size: 9px; color: var(--text-dim); margin-top: 2px; }
+  .prio-code-note {
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    border-left: 3px solid var(--yellow);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+  .prio-code-note .highlight { color: var(--yellow); }
+  .prio-code-note .red { color: var(--red); }
+
+  /* LOG */
+  .algo-log { padding: 10px 16px; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
+  .log-entry {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    animation: fadeInLog 0.3s ease;
+  }
+  @keyframes fadeInLog { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
+  .log-time { color: var(--text-dim); flex-shrink: 0; }
+  .log-type { font-weight: 700; flex-shrink: 0; min-width: 55px; }
+  .log-msg { color: var(--text-dim); }
+  .log-entry.warn { background: rgba(255,214,10,0.06); }
+  .log-entry.warn .log-type { color: var(--yellow); }
+  .log-entry.err { background: rgba(255,45,85,0.06); }
+  .log-entry.err .log-type { color: var(--red); }
+  .log-entry.info { background: rgba(10,132,255,0.06); }
+  .log-entry.info .log-type { color: var(--blue); }
+  .log-entry.ok { background: rgba(48,209,88,0.06); }
+  .log-entry.ok .log-type { color: var(--green); }
+
+  /* NOTIFICATION BANNER */
+  .notif-banner {
+    position: fixed;
+    bottom: 20px;
+    right: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    border-radius: 10px;
+    padding: 12px 16px;
+    max-width: 300px;
+    font-size: 11px;
+    font-family: var(--mono);
+    line-height: 1.5;
+    color: var(--text-dim);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    z-index: 200;
+    animation: slideIn 0.3s ease;
+    display: none;
+  }
+  .notif-banner.show { display: block; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; } }
+  .notif-title { color: var(--red); font-weight: 700; margin-bottom: 4px; font-size: 11px; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
+
+  .tip-theft-note {
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    border-left: 3px solid var(--purple);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-top: 6px;
+  }
+  .tip-theft-note .p { color: var(--purple); }
+
+  .tip-sim {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .tip-sim-box {
+    flex: 1;
+    padding: 8px 10px;
+    background: var(--bg3);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .tip-sim-box .ts-label { font-size: 9px; font-family: var(--mono); color: var(--text-dim); margin-bottom: 4px; }
+  .tip-sim-box .ts-val {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .tip-sim-box .ts-base { font-size: 9px; color: var(--text-dim); margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Deliver<span>X</span> <span style="font-size:11px;color:var(--text-dim);font-weight:400">// Algorithm Expose</span></div>
+  <div class="header-right">
+    <div class="live-dot"></div>
+    <div class="live-label">LIVE SIMULATION</div>
+    <div class="badge-nda">⚠ NDA LEAK</div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- ═══ LEFT: PHONE ═══ -->
+  <div class="phone-panel">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+
+        <!-- Screen 0: Home -->
+        <div class="app-screen active" id="screen-home">
+          <div class="app-topbar">
+            <div class="app-logo-text">🍕 DeliverX</div>
+            <div class="app-avatar">NV</div>
+          </div>
+          <div class="app-hero">
+            <h3>Giao hàng siêu tốc! 🚀</h3>
+            <p>Đặt ngay — ship trong 25 phút</p>
+          </div>
+          <div class="app-section-title">Gần bạn</div>
+          <div class="restaurant-list">
+            <div class="restaurant-card" onclick="goTo('screen-restaurant','Bún bò Huế Cô Lan')">
+              <div class="rest-img">🍜</div>
+              <div class="rest-info">
+                <div class="rest-name">Bún Bò Cô Lan</div>
+                <div class="rest-meta">⭐ 4.8 · 1.2 km · 20-30 phút</div>
+                <div class="rest-tag">Phổ biến</div>
+              </div>
+            </div>
+            <div class="restaurant-card" onclick="goTo('screen-restaurant','Cơm tấm Sài Gòn')">
+              <div class="rest-img">🍚</div>
+              <div class="rest-info">
+                <div class="rest-name">Cơm Tấm Sài Gòn</div>
+                <div class="rest-meta">⭐ 4.6 · 0.8 km · 15-25 phút</div>
+                <div class="rest-tag">Bán chạy</div>
+              </div>
+            </div>
+            <div class="restaurant-card" onclick="goTo('screen-restaurant','Pizza House')">
+              <div class="rest-img">🍕</div>
+              <div class="rest-info">
+                <div class="rest-name">Pizza House</div>
+                <div class="rest-meta">⭐ 4.5 · 2.1 km · 30-40 phút</div>
+              </div>
+            </div>
+            <div class="restaurant-card" onclick="goTo('screen-restaurant','Trà sữa MilkTea')">
+              <div class="rest-img">🧋</div>
+              <div class="rest-info">
+                <div class="rest-name">Trà Sữa MilkTea</div>
+                <div class="rest-meta">⭐ 4.7 · 0.5 km · 10-20 phút</div>
+                <div class="rest-tag">Mới</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 1: Restaurant Menu -->
+        <div class="app-screen" id="screen-restaurant">
+          <div class="screen-header">
+            <div class="back-btn" onclick="goTo('screen-home')">‹</div>
+            <div class="screen-title" id="rest-screen-title">Nhà hàng</div>
+          </div>
+          <div class="menu-list" id="menu-list">
+            <!-- populated by JS -->
+          </div>
+          <div style="padding:8px 14px">
+            <button class="order-btn" onclick="goTo('screen-cart')" style="margin:0">Xem giỏ hàng 🛒</button>
+          </div>
+        </div>
+
+        <!-- Screen 2: Cart -->
+        <div class="app-screen" id="screen-cart">
+          <div class="screen-header">
+            <div class="back-btn" onclick="goTo('screen-restaurant')">‹</div>
+            <div class="screen-title">Giỏ hàng</div>
+          </div>
+          <div class="cart-list" id="cart-list"></div>
+
+          <div class="fee-breakdown" id="fee-breakdown"></div>
+
+          <div class="tip-section">
+            <div class="tip-label">Tiền tip cho tài xế 💚</div>
+            <div class="tip-options">
+              <button class="tip-btn" onclick="setTip(0,this)">Không</button>
+              <button class="tip-btn selected" onclick="setTip(10000,this)">10k</button>
+              <button class="tip-btn" onclick="setTip(20000,this)">20k</button>
+              <button class="tip-btn" onclick="setTip(50000,this)">50k</button>
+            </div>
+          </div>
+
+          <div class="priority-section">
+            <div class="priority-toggle" onclick="togglePriority()">
+              <div class="priority-left">
+                <div class="priority-name">⚡ Ưu tiên giao hàng</div>
+                <div class="priority-sub">Thêm 29.000đ · Nhanh hơn 15 phút</div>
+              </div>
+              <div class="toggle-switch" id="priority-toggle">
+                <div class="toggle-knob"></div>
+              </div>
+            </div>
+          </div>
+
+          <button class="order-btn" onclick="placeOrder()">Đặt hàng · <span id="total-display">0đ</span></button>
+        </div>
+
+        <!-- Screen 3: Tracking -->
+        <div class="app-screen" id="screen-tracking">
+          <div class="track-map">
+            <div class="map-grid"></div>
+            <div class="map-road-h" style="top:35%;left:0;right:0"></div>
+            <div class="map-road-h" style="top:65%;left:0;right:0"></div>
+            <div class="map-road-v" style="left:30%;top:0;bottom:0"></div>
+            <div class="map-road-v" style="left:60%;top:0;bottom:0"></div>
+            <div class="driver-dot">🛵</div>
+            <div class="dest-pin">📍</div>
+          </div>
+          <div class="track-info">
+            <div class="track-eta" id="track-eta">22 <span>phút</span></div>
+            <div class="track-status" id="track-status">Tài xế đang lấy đơn...</div>
+          </div>
+          <div class="driver-card">
+            <div class="driver-avatar">👨</div>
+            <div>
+              <div class="driver-name">Nguyễn Văn Tài</div>
+              <div class="driver-pay-visible" id="driver-pay-shown">Thu nhập đơn này: <span id="driver-shown-amount">đang tính...</span></div>
+            </div>
+          </div>
+          <div class="track-steps">
+            <div class="step"><div class="step-dot done"></div><div class="step-text done">Đơn đã được xác nhận</div></div>
+            <div class="step"><div class="step-dot done"></div><div class="step-text done">Nhà hàng đang chuẩn bị</div></div>
+            <div class="step"><div class="step-dot active" id="step3dot"></div><div class="step-text active" id="step3text">Tài xế đang di chuyển</div></div>
+            <div class="step"><div class="step-dot" id="step4dot"></div><div class="step-text" id="step4text">Giao đến bạn</div></div>
+          </div>
+        </div>
+
+      </div><!-- phone-screen -->
+    </div><!-- phone-frame -->
+  </div>
+
+  <!-- ═══ RIGHT: DASHBOARD ═══ -->
+  <div class="dashboard">
+    <div class="dash-header">
+      <div>
+        <div class="dash-title">BACKEND SYSTEM MONITOR</div>
+        <div class="dash-subtitle">Những gì họ <span>KHÔNG</span> muốn bạn thấy</div>
+      </div>
+      <div class="order-counter">
+        <div class="order-count-num" id="total-orders">0</div>
+        <div class="order-count-label">ĐƠN HÀNG</div>
+      </div>
+    </div>
+
+    <!-- Running stats -->
+    <div class="running-stats">
+      <div class="stat-item">
+        <div class="stat-num" id="stat-corp">0đ</div>
+        <div class="stat-label">CÔNG TY THU</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-driver" style="color:var(--driver)">0đ</div>
+        <div class="stat-label">TÀI XẾ NHẬN</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-ratio" style="color:var(--purple)">—</div>
+        <div class="stat-label">TỶ LỆ CORP/DRIVER</div>
+      </div>
+    </div>
+
+    <!-- Money Split -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-head-title"><span class="icon">💰</span> PHÂN CHIA TIỀN ĐƠN HÀNG</div>
+        <div class="section-badge badge-red">REAL-TIME</div>
+      </div>
+      <div class="money-split">
+        <div class="split-order-total">Tổng đơn: <span id="split-total">—</span></div>
+        <div class="split-bar" id="split-bar">
+          <div class="split-seg corp" id="seg-corp" style="width:0%">—</div>
+          <div class="split-seg driver" id="seg-driver" style="width:0%">—</div>
+          <div class="split-seg fee" id="seg-fee" style="width:0%">—</div>
+          <div class="split-seg tip" id="seg-tip" style="width:0%">—</div>
+        </div>
+        <div class="split-legend">
+          <div class="legend-item"><div class="legend-dot corp"></div>Công ty (<span id="leg-corp">—</span>)</div>
+          <div class="legend-item"><div class="legend-dot driver"></div>Tài xế (<span id="leg-driver">—</span>)</div>
+          <div class="legend-item"><div class="legend-dot fee"></div>Phí ẩn (<span id="leg-fee">—</span>)</div>
+          <div class="legend-item"><div class="legend-dot tip"></div>Tip (<span id="leg-tip">—</span>)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Algorithm Stats -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-head-title"><span class="icon">⚙️</span> THUẬT TOÁN NỘI BỘ</div>
+        <div class="section-badge badge-yellow">CLASSIFIED</div>
+      </div>
+      <div class="algo-grid">
+        <div class="algo-card red">
+          <div class="algo-card-title">Priority Flag</div>
+          <div class="algo-value" id="algo-priority">FALSE</div>
+          <div class="algo-sub" id="algo-priority-sub">Dispatch logic IGNORES flag.<br>Boolean trong DB, không tác dụng.</div>
+        </div>
+        <div class="algo-card yellow">
+          <div class="algo-card-title">Delay Injected</div>
+          <div class="algo-value" id="algo-delay">+0 phút</div>
+          <div class="algo-sub">Đơn thường bị trì hoãn nhân tạo<br>để Priority "có vẻ" nhanh hơn.</div>
+        </div>
+        <div class="algo-card blue">
+          <div class="algo-card-title">Base Pay (tài xế)</div>
+          <div class="algo-value" id="algo-base">—</div>
+          <div class="algo-sub" id="algo-base-sub">Động: dự đoán tip cao → trả base thấp</div>
+        </div>
+        <div class="algo-card purple">
+          <div class="algo-card-title">Driver Score</div>
+          <div class="algo-value" id="algo-descore">HIGH</div>
+          <div class="algo-sub" id="algo-descore-sub">"High Desperation" → Nhận đơn rác<br>Đơn tốt dành cho driver casual.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Priority Scam -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-head-title"><span class="icon">⚡</span> PHÍ ƯU TIÊN — SCAM A/B TEST</div>
+        <div class="section-badge badge-yellow">EXPOSED</div>
+      </div>
+      <div class="priority-reveal">
+        <div class="priority-compare">
+          <div class="prio-box">
+            <div class="prio-box-label" style="color:var(--yellow)">⚡ Priority (29k)</div>
+            <div class="prio-time" id="prio-time-fast">22 phút</div>
+            <div class="prio-time-sub">Thực tế không thay đổi</div>
+          </div>
+          <div class="prio-box">
+            <div class="prio-box-label" style="color:var(--text-dim)">Standard (free)</div>
+            <div class="prio-time" id="prio-time-slow" style="color:var(--text-dim)">34 phút</div>
+            <div class="prio-time-sub" style="color:var(--red)">Bị delay nhân tạo +12 phút</div>
+          </div>
+        </div>
+        <div class="prio-code-note">
+          <span class="highlight">// dispatch_engine.js v4.7.2</span><br>
+          <span class="red">if</span> (order.is_priority === <span class="highlight">true</span>) {<br>
+          &nbsp;&nbsp;<span class="red">// TODO: implement actual speed boost</span><br>
+          &nbsp;&nbsp;return dispatch(order); <span class="red">// ← same as standard</span><br>
+          } else {<br>
+          &nbsp;&nbsp;<span class="highlight">delay(randomBetween(5, 12)); // A/B test</span><br>
+          &nbsp;&nbsp;return dispatch(order);<br>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Desperation Score -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-head-title"><span class="icon">😰</span> DESPERATION SCORE ENGINE</div>
+        <div class="section-badge badge-red">INTERNAL ONLY</div>
+      </div>
+      <div class="descore-section">
+        <div class="descore-driver">
+          <div class="descore-avatar">👨</div>
+          <div>
+            <div class="descore-name">Nguyễn Văn Tài</div>
+            <div class="descore-meta">Login: 22:00 hàng ngày · Accept rate: 98%</div>
+          </div>
+          <div class="descore-score-badge score-high">HIGH DESP</div>
+        </div>
+        <div class="descore-driver">
+          <div class="descore-avatar">👩</div>
+          <div>
+            <div class="descore-name">Trần Thị My (Casual)</div>
+            <div class="descore-meta">Login: cuối tuần · Accept rate: 61%</div>
+          </div>
+          <div class="descore-score-badge score-low">LOW DESP</div>
+        </div>
+        <div class="descore-explanation">
+          <div class="descore-code">
+            <span class="k">function</span> <span class="n">assignOrder</span>(driver, order) {<br>
+            &nbsp;&nbsp;<span class="k">if</span> (driver.<span class="highlight">desperation_score</span> === <span class="s">"HIGH"</span>) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="c">// Driver sẽ nhận dù lương thấp</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;order.offer_price = <span class="highlight">baseRate * 0.4</span>; <span class="c">// 40%</span><br>
+            &nbsp;&nbsp;} <span class="k">else</span> {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="c">// Casual driver: cần "gamify"</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;order.offer_price = <span class="highlight">baseRate * 1.2</span>; <span class="c">// 120%</span><br>
+            &nbsp;&nbsp;}<br>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tip Theft 2.0 -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-head-title"><span class="icon">💸</span> TIP THEFT 2.0 — PREDICTIVE MODEL</div>
+        <div class="section-badge badge-purple" style="background:rgba(191,90,242,0.12);color:var(--purple);border:1px solid rgba(191,90,242,0.3)">ALGORITHM</div>
+      </div>
+      <div style="padding: 14px 16px;">
+        <div class="tip-theft-note">
+          <span class="p">// tip_prediction_model.py</span><br>
+          predicted_tip = model.predict(user_history)<br>
+          <span class="p">if</span> predicted_tip &gt; 50000:<br>
+          &nbsp;&nbsp;base_pay = <span class="p">MIN_BASE</span> <span style="color:var(--text-dim)"># Tip cao → trả base thấp</span><br>
+          <span class="p">else</span>:<br>
+          &nbsp;&nbsp;base_pay = <span class="p">HIGH_BASE</span> <span style="color:var(--text-dim)"># Không tip → trả base cao</span><br>
+          <span style="color:var(--red)"># Kết quả: tip của bạn subsidize công ty</span>
+        </div>
+        <div class="tip-sim" id="tip-sim">
+          <div class="tip-sim-box">
+            <div class="ts-label">BẠN TIP NHIỀU (50k)</div>
+            <div class="ts-val" style="color:var(--driver)">Base: 20.000đ</div>
+            <div class="ts-base">Tài xế nhận: 70k tổng</div>
+          </div>
+          <div class="tip-sim-box">
+            <div class="ts-label">BẠN KHÔNG TIP</div>
+            <div class="ts-val" style="color:var(--blue)">Base: 70.000đ</div>
+            <div class="ts-base">Tài xế nhận: 70k tổng</div>
+          </div>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:8px;padding:8px 10px;background:var(--red-dim);border-radius:6px;color:var(--red)">
+          → Dù bạn tip hay không, tài xế nhận số tiền gần như nhau. Tip của bạn đi vào túi công ty.
+        </div>
+      </div>
+    </div>
+
+    <!-- Fee Reveal -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-head-title"><span class="icon">🎭</span> PHÍ "PHÚC LỢI" TÀI XẾ — SỰ THẬT</div>
+        <div class="section-badge badge-red">SCAM</div>
+      </div>
+      <div class="fee-reveal">
+        <div class="fee-item">
+          <div class="fee-item-icon">⚡</div>
+          <div class="fee-item-body">
+            <div class="fee-item-name" style="color:var(--yellow)">Phí Ưu Tiên (Priority Fee)</div>
+            <div class="fee-item-desc">Hiển thị như "nhanh hơn 15 phút" nhưng dispatch logic không thay đổi. A/B test: làm chậm đơn thường, không tăng tốc đơn Priority.</div>
+          </div>
+          <div class="fee-item-amount red">→ CORP</div>
+        </div>
+        <div class="fee-item">
+          <div class="fee-item-icon">🚗</div>
+          <div class="fee-item-body">
+            <div class="fee-item-name" style="color:var(--blue)">Driver Benefit Fee (1.5$)</div>
+            <div class="fee-item-desc">Thiết kế để bạn nghĩ "mình đang giúp tài xế". Thực tế: 100% vào quỹ vận động hành lang chống công đoàn tài xế — "Policy Defense" cost center.</div>
+          </div>
+          <div class="fee-item-amount red">→ CORP</div>
+        </div>
+        <div class="fee-item">
+          <div class="fee-item-icon">💡</div>
+          <div class="fee-item-body">
+            <div class="fee-item-name" style="color:var(--green)">Tip của khách</div>
+            <div class="fee-item-desc">Predictive model: nếu bạn tip nhiều, base pay tài xế bị hạ tương ứng. Tài xế nhận ~như nhau. Phần chênh lệch thuộc công ty.</div>
+          </div>
+          <div class="fee-item-amount red">→ CORP</div>
+        </div>
+        <div class="fee-item">
+          <div class="fee-item-icon">📦</div>
+          <div class="fee-item-body">
+            <div class="fee-item-name">Phí Giao Hàng (Ship Fee)</div>
+            <div class="fee-item-desc">Tài xế nhận khoảng 30-40%. Phần còn lại là margin công ty và hoa hồng nhà hàng.</div>
+          </div>
+          <div class="fee-item-amount green" id="fee-driver-pct">≈35% → Driver</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day Earnings -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-head-title"><span class="icon">📊</span> THU NHẬP NGÀY CỦA TÀI XẾ VS CÔNG TY</div>
+        <div class="section-badge badge-blue">SIMULATION</div>
+      </div>
+      <div class="earnings-section">
+        <div class="earnings-vs">
+          <div class="earns-box company">
+            <div class="earns-label">CÔNG TY (30 đơn/ngày)</div>
+            <div class="earns-amount" id="earns-corp">0đ</div>
+            <div class="earns-note">Fees + margin + slush fund</div>
+          </div>
+          <div class="earns-box driver">
+            <div class="earns-label">TÀI XẾ (10h/ngày)</div>
+            <div class="earns-amount" id="earns-driver">0đ</div>
+            <div class="earns-note">Sau xăng, khấu hao xe</div>
+          </div>
+        </div>
+        <div class="hours-bar-wrap">
+          <div class="hours-row">
+            <div class="hours-label">Corp</div>
+            <div class="hours-bar"><div class="hours-fill corp" id="bar-corp" style="width:0%"></div></div>
+          </div>
+          <div class="hours-row">
+            <div class="hours-label">Driver</div>
+            <div class="hours-bar"><div class="hours-fill drv" id="bar-drv" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Algorithm Log -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-head-title"><span class="icon">📋</span> SYSTEM LOG — BACKEND</div>
+        <div class="section-badge badge-green">STREAMING</div>
+      </div>
+      <div class="algo-log" id="algo-log">
+        <div class="log-entry info">
+          <span class="log-time">00:00</span>
+          <span class="log-type">[INIT]</span>
+          <span class="log-msg">DeliverX Algorithm Engine v7.3.1 started</span>
+        </div>
+        <div class="log-entry warn">
+          <span class="log-time">00:01</span>
+          <span class="log-type">[WARN]</span>
+          <span class="log-msg">Driver desperation_score recalibration scheduled</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- dashboard -->
+</div><!-- main -->
+
+<!-- Notification Banner -->
+<div class="notif-banner" id="notif-banner">
+  <div class="notif-title" id="notif-title">SYSTEM ALERT</div>
+  <div id="notif-body">...</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+const state = {
+  currentRestaurant: '',
+  cart: [],
+  tip: 10000,
+  priorityOn: false,
+  totalOrders: 0,
+  totalCorp: 0,
+  totalDriver: 0,
+  trackingInterval: null,
+};
+
+const MENUS = {
+  'Bún bò Huế Cô Lan': [
+    { name: 'Bún Bò đặc biệt', price: 55000, desc: 'Gân, chả, móng' },
+    { name: 'Bún Bò thường', price: 45000, desc: 'Bò, rau thơm' },
+    { name: 'Chả giò', price: 25000, desc: '4 cuộn/phần' },
+    { name: 'Nước ép cam', price: 20000, desc: 'Tươi nguyên chất' },
+  ],
+  'Cơm tấm Sài Gòn': [
+    { name: 'Cơm tấm sườn bì', price: 60000, desc: 'Sườn nướng, bì, chả' },
+    { name: 'Cơm tấm gà', price: 55000, desc: 'Đùi gà nướng sả' },
+    { name: 'Trà đá', price: 10000, desc: 'Ngọt vừa' },
+  ],
+  'Pizza House': [
+    { name: 'Pizza Margherita M', price: 120000, desc: 'Cà chua, phô mai tươi' },
+    { name: 'Pizza Pepperoni L', price: 160000, desc: 'Xúc xích, phô mai kéo' },
+    { name: 'Mì Ý bò bằm', price: 85000, desc: 'Sốt bolognese' },
+    { name: 'Nước ngọt lon', price: 15000, desc: 'Pepsi / 7Up' },
+  ],
+  'Trà sữa MilkTea': [
+    { name: 'Trà sữa truyền thống', price: 35000, desc: 'Size L, đường 50%' },
+    { name: 'Matcha đá xay', price: 45000, desc: 'Topping pudding' },
+    { name: 'Hồng trà sữa tươi', price: 40000, desc: 'Sữa tươi nguyên kem' },
+  ],
+};
+
+const fmt = (n) => n.toLocaleString('vi-VN') + 'đ';
+const fmtK = (n) => {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(0) + 'K';
+  return n + '';
+};
+
+// ══════════════════════════════════════════
+// SCREEN NAVIGATION
+// ══════════════════════════════════════════
+function goTo(screenId, arg) {
+  document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+
+  if (screenId === 'screen-restaurant' && arg) {
+    state.currentRestaurant = arg;
+    document.getElementById('rest-screen-title').textContent = arg;
+    renderMenu();
+  }
+  if (screenId === 'screen-cart') {
+    renderCart();
+  }
+}
+
+// ══════════════════════════════════════════
+// MENU & CART
+// ══════════════════════════════════════════
+function renderMenu() {
+  const items = MENUS[state.currentRestaurant] || [];
+  const list = document.getElementById('menu-list');
+  list.innerHTML = '';
+  items.forEach((item, i) => {
+    list.innerHTML += `
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="item-desc">${item.desc}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="item-price">${fmt(item.price)}</div>
+          <button class="add-btn" onclick="addToCart(${i})">+</button>
+        </div>
+      </div>`;
+  });
+}
+
+function addToCart(idx) {
+  const items = MENUS[state.currentRestaurant];
+  const item = items[idx];
+  const existing = state.cart.find(c => c.name === item.name);
+  if (existing) existing.qty++;
+  else state.cart.push({ ...item, qty: 1 });
+  addLog('info', '[CART]', `Added: ${item.name} — ${fmt(item.price)}`);
+}
+
+function renderCart() {
+  if (state.cart.length === 0) {
+    state.cart = [{ name: 'Bún Bò đặc biệt', price: 55000, qty: 1 }];
+  }
+  const list = document.getElementById('cart-list');
+  list.innerHTML = '';
+  state.cart.forEach(item => {
+    list.innerHTML += `
+      <div class="cart-item">
+        <div><div class="cart-item-name">${item.qty}× ${item.name}</div></div>
+        <div class="cart-item-price">${fmt(item.price * item.qty)}</div>
+      </div>`;
+  });
+  renderFees();
+}
+
+function renderFees() {
+  const subtotal = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const shipFee = 25000;
+  const priorityFee = state.priorityOn ? 29000 : 0;
+  const benefitFee = 15000;
+  const total = subtotal + shipFee + priorityFee + benefitFee + state.tip;
+
+  document.getElementById('total-display').textContent = fmt(total);
+  document.getElementById('fee-breakdown').innerHTML = `
+    <div class="fee-row"><span>Tạm tính</span><span>${fmt(subtotal)}</span></div>
+    <div class="fee-row"><span>Phí giao hàng</span><span>${fmt(shipFee)}</span></div>
+    ${state.priorityOn ? `<div class="fee-row highlight"><span>⚡ Phí Ưu Tiên <span class="fee-tag">100% CORP</span></span><span>${fmt(priorityFee)}</span></div>` : ''}
+    <div class="fee-row"><span>Phí Phúc lợi Tài xế <span class="fee-tag">100% CORP</span></span><span>${fmt(benefitFee)}</span></div>
+    <div class="fee-row"><span>Tip tài xế</span><span>${fmt(state.tip)}</span></div>
+    <div class="fee-row total"><span>Tổng cộng</span><span>${fmt(total)}</span></div>`;
+}
+
+function setTip(amount, btn) {
+  state.tip = amount;
+  document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  renderFees();
+  updateTipTheftSim();
+}
+
+function updateTipTheftSim() {
+  const tipAmt = state.tip;
+  const basePay = tipAmt > 30000 ? 20000 : 70000;
+  const total = tipAmt + basePay;
+  document.getElementById('tip-sim').innerHTML = `
+    <div class="tip-sim-box">
+      <div class="ts-label">BẠN TIP (${fmt(tipAmt)})</div>
+      <div class="ts-val" style="color:var(--driver)">Base: ${fmt(basePay)}</div>
+      <div class="ts-base">Tài xế nhận: ${fmt(total)}</div>
+    </div>
+    <div class="tip-sim-box">
+      <div class="ts-label">KHÔNG TIP</div>
+      <div class="ts-val" style="color:var(--blue)">Base: ${fmt(70000)}</div>
+      <div class="ts-base">Tài xế nhận: ${fmt(70000)}</div>
+    </div>`;
+}
+
+function togglePriority() {
+  state.priorityOn = !state.priorityOn;
+  const toggle = document.getElementById('priority-toggle');
+  toggle.classList.toggle('on', state.priorityOn);
+  renderFees();
+  updatePriorityReveal();
+  if (state.priorityOn) {
+    addLog('warn', '[PRIORITY]', 'Flag set to TRUE — dispatch_engine IGNORING flag');
+    addLog('err', '[A/B TEST]', 'Standard orders delayed +8 min to compensate');
+    showNotif('⚡ Priority Activated', 'Flag boolean = TRUE. Dispatch logic không đổi. Standard orders bị delay nhân tạo.');
+  }
+}
+
+function updatePriorityReveal() {
+  const pFast = document.getElementById('prio-time-fast');
+  const pSlow = document.getElementById('prio-time-slow');
+  if (state.priorityOn) {
+    pFast.textContent = '22 phút';
+    pSlow.textContent = '34 phút';
+    document.getElementById('algo-priority').textContent = 'TRUE';
+    document.getElementById('algo-priority').style.color = 'var(--yellow)';
+    document.getElementById('algo-delay').textContent = '+12 phút';
+  } else {
+    pFast.textContent = '22 phút';
+    pSlow.textContent = '22 phút';
+    document.getElementById('algo-priority').textContent = 'FALSE';
+    document.getElementById('algo-priority').style.color = 'var(--red)';
+    document.getElementById('algo-delay').textContent = '+0 phút';
+  }
+}
+
+// ══════════════════════════════════════════
+// PLACE ORDER
+// ══════════════════════════════════════════
+function placeOrder() {
+  const subtotal = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const shipFee = 25000;
+  const priorityFee = state.priorityOn ? 29000 : 0;
+  const benefitFee = 15000;
+  const total = subtotal + shipFee + priorityFee + benefitFee + state.tip;
+
+  // Calculate splits
+  const corpBase = Math.round(subtotal * 0.30 + shipFee * 0.65);
+  const driverBase = state.tip > 30000 ? 20000 : 70000; // tip theft
+  const feeTotal = priorityFee + benefitFee;
+  const tipPocket = Math.max(0, state.tip - (driverBase - 20000)); // extra absorbed
+  const corpTotal = total - driverBase - Math.round(state.tip * 0.3);
+  const driverTotal = driverBase + Math.round(state.tip * 0.3);
+  const actualDriver = driverBase + Math.round(state.tip * 0.3);
+
+  // Update running totals
+  state.totalOrders++;
+  state.totalCorp += corpTotal;
+  state.totalDriver += actualDriver;
+
+  updateRunningStats();
+  updateSplitBar(total, corpTotal, actualDriver, feeTotal, state.tip);
+  updateDayEarnings();
+
+  // Update algo cards
+  document.getElementById('algo-base').textContent = fmt(driverBase);
+  document.getElementById('algo-base-sub').textContent =
+    state.tip > 30000
+      ? '⚠ Tip cao dự đoán → Base bị hạ thấp'
+      : '✓ Không tip dự đoán → Base cao';
+
+  // Go to tracking
+  goTo('screen-tracking');
+  startTracking(actualDriver);
+
+  // Logs
+  addLog('warn', '[ORDER]', `New order #${state.totalOrders} — Total: ${fmt(total)}`);
+  addLog('err', '[PROFIT]', `Corp extracts: ${fmt(corpTotal)} | Driver gets: ${fmt(actualDriver)}`);
+  if (state.priorityOn) addLog('warn', '[PRIORITY]', `Fee ${fmt(priorityFee)} → Corp slush fund. Dispatch unchanged.`);
+  addLog('err', '[BENEFIT]', `"Driver Benefit Fee" ${fmt(benefitFee)} → Policy Defense budget`);
+  addLog('info', '[DESP]', `Nguyễn Văn Tài [HIGH] — assigned low-value order`);
+
+  // Update driver shown amount
+  document.getElementById('driver-shown-amount').textContent = fmt(actualDriver);
+}
+
+function updateSplitBar(total, corp, driver, fee, tip) {
+  const pCorp = Math.round(corp / total * 100);
+  const pDriver = Math.round(driver / total * 100);
+  const pFee = Math.round(fee / total * 100);
+  const pTip = 100 - pCorp - pDriver - pFee;
+
+  document.getElementById('seg-corp').style.width = pCorp + '%';
+  document.getElementById('seg-corp').textContent = pCorp > 8 ? pCorp + '%' : '';
+  document.getElementById('seg-driver').style.width = pDriver + '%';
+  document.getElementById('seg-driver').textContent = pDriver > 8 ? pDriver + '%' : '';
+  document.getElementById('seg-fee').style.width = pFee + '%';
+  document.getElementById('seg-fee').textContent = pFee > 8 ? pFee + '%' : '';
+  document.getElementById('seg-tip').style.width = Math.max(pTip,0) + '%';
+  document.getElementById('seg-tip').textContent = pTip > 5 ? pTip + '%' : '';
+
+  document.getElementById('split-total').textContent = fmt(total);
+  document.getElementById('leg-corp').textContent = fmt(corp);
+  document.getElementById('leg-driver').textContent = fmt(driver);
+  document.getElementById('leg-fee').textContent = fmt(fee);
+  document.getElementById('leg-tip').textContent = fmt(tip);
+}
+
+function updateRunningStats() {
+  document.getElementById('total-orders').textContent = state.totalOrders;
+  document.getElementById('stat-corp').textContent = fmtK(state.totalCorp) + 'đ';
+  document.getElementById('stat-driver').textContent = fmtK(state.totalDriver) + 'đ';
+  if (state.totalDriver > 0) {
+    const ratio = (state.totalCorp / state.totalDriver).toFixed(1);
+    document.getElementById('stat-ratio').textContent = ratio + ':1';
+  }
+}
+
+function updateDayEarnings() {
+  // Simulate 30 orders/day
+  const ordersPerDay = 30;
+  const avgTotal = 150000;
+  const corpDay = Math.round(ordersPerDay * avgTotal * 0.55);
+  const driverDay = Math.round(ordersPerDay * 65000 - 80000); // minus gas/depreciation
+
+  document.getElementById('earns-corp').textContent = fmt(corpDay);
+  document.getElementById('earns-driver').textContent = fmt(driverDay);
+
+  const maxVal = corpDay;
+  document.getElementById('bar-corp').style.width = '90%';
+  document.getElementById('bar-corp').textContent = fmt(corpDay);
+  document.getElementById('bar-drv').style.width = Math.round(driverDay / maxVal * 90) + '%';
+  document.getElementById('bar-drv').textContent = fmt(driverDay);
+}
+
+// ══════════════════════════════════════════
+// TRACKING SIMULATION
+// ══════════════════════════════════════════
+function startTracking(driverPay) {
+  let eta = 22;
+  const etaEl = document.getElementById('track-eta');
+  const statusEl = document.getElementById('track-status');
+
+  if (state.trackingInterval) clearInterval(state.trackingInterval);
+
+  const statuses = [
+    'Tài xế đang lấy đơn...',
+    'Đơn đã được lấy ✓',
+    'Đang trên đường giao...',
+    'Sắp đến nơi!',
+    'Đã giao thành công 🎉',
+  ];
+  let sIdx = 0;
+
+  state.trackingInterval = setInterval(() => {
+    eta = Math.max(0, eta - 1);
+    etaEl.innerHTML = eta + ' <span>phút</span>';
+    if (eta % 5 === 0 && sIdx < statuses.length - 1) {
+      sIdx++;
+      statusEl.textContent = statuses[sIdx];
+    }
+    if (eta === 10) {
+      document.getElementById('step3dot').className = 'step-dot done';
+      document.getElementById('step3text').className = 'step-text done';
+      document.getElementById('step4dot').className = 'step-dot active';
+      document.getElementById('step4text').className = 'step-text active';
+    }
+    if (eta === 0) {
+      clearInterval(state.trackingInterval);
+      showNotif('📦 Đã giao thành công', `Tài xế nhận: ${fmt(driverPay)}. Công ty đã kiếm khoảng ${fmt(driverPay * 2.8)} từ đơn hàng này.`);
+    }
+  }, 1000);
+}
+
+// ══════════════════════════════════════════
+// LOGGER
+// ══════════════════════════════════════════
+let logTime = 0;
+function addLog(type, category, msg) {
+  const log = document.getElementById('algo-log');
+  const t = String(Math.floor(logTime / 60)).padStart(2,'0') + ':' + String(logTime % 60).padStart(2,'0');
+  logTime++;
+  const entry = document.createElement('div');
+  entry.className = `log-entry ${type}`;
+  entry.innerHTML = `<span class="log-time">${t}</span><span class="log-type">${category}</span><span class="log-msg">${msg}</span>`;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ══════════════════════════════════════════
+// NOTIFICATION
+// ══════════════════════════════════════════
+let notifTimeout;
+function showNotif(title, body) {
+  const el = document.getElementById('notif-banner');
+  document.getElementById('notif-title').textContent = title;
+  document.getElementById('notif-body').textContent = body;
+  el.classList.add('show');
+  clearTimeout(notifTimeout);
+  notifTimeout = setTimeout(() => el.classList.remove('show'), 5000);
+}
+
+// ══════════════════════════════════════════
+// AUTO BACKGROUND LOGS
+// ══════════════════════════════════════════
+const bgLogs = [
+  ['info', '[DESP]', 'Recalculating desperation_score for 1,247 active drivers'],
+  ['warn', '[TIP]', 'Predictive model: user #4721 classified as HIGH_TIPPER'],
+  ['err', '[BASE_PAY]', 'Lowering base offer for high-tip user: 70k → 20k'],
+  ['warn', '[LOBBY]', 'Policy Defense fund received: 45,000,000đ today'],
+  ['info', '[A/B]', 'Standard delay injected: 847 orders slowed by avg 9.2 min'],
+  ['err', '[BENEFIT]', 'Driver Benefit Fee routed to cost_center: POLICY_DEFENSE'],
+  ['warn', '[DESP]', 'Driver #Tài flagged HIGH — rerouting premium orders away'],
+  ['info', '[CORP]', 'Today margin: 63.2% of GMV captured'],
+  ['err', '[TIP]', 'Tip absorption: $12,450 tip offset against base pay savings'],
+  ['warn', '[SPRINT]', 'PM meeting: squeeze 0.4% margin from "human assets" Q3'],
+];
+let bgIdx = 0;
+setInterval(() => {
+  const l = bgLogs[bgIdx % bgLogs.length];
+  addLog(l[0], l[1], l[2]);
+  bgIdx++;
+}, 3500);
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+updateTipTheftSim();
+updatePriorityReveal();
+</script>
+</body>
+</html>
