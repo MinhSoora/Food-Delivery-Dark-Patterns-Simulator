@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DeliverX — Hệ thống vạch trần</title>
+<title>DeliverX — Hệ thống vạch trần thuật toán</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
   :root {
-    --bg: #07070d;
-    --bg2: #0f0f1a;
-    --bg3: #161625;
+    --bg: #06060c;
+    --bg2: #0e0e18;
+    --bg3: #151522;
+    --bg4: #1b1b2c;
     --red: #ff2d55;
     --red-dim: rgba(255,45,85,0.15);
     --yellow: #ffd60a;
@@ -18,87 +19,180 @@
     --green-neon: #39ff14;
     --blue: #0a84ff;
     --purple: #bf5af2;
-    --text: #e5e5f0;
+    --orange: #ff9f0a;
+    --text: #e7e7f2;
     --text-dim: #6b6b88;
-    --border: rgba(255,255,255,0.06);
-    --corporate: #0a84ff;
-    --driver: #ff453a;
-    --phone-w: 320px;
+    --border: rgba(255,255,255,0.07);
     --mono: 'JetBrains Mono', monospace;
     --sans: 'Inter', sans-serif;
+    --phone-w: 300px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: var(--bg);
+    background:
+      radial-gradient(ellipse 900px 500px at 85% -10%, rgba(191,90,242,0.10), transparent),
+      radial-gradient(ellipse 700px 500px at 0% 100%, rgba(255,45,85,0.08), transparent),
+      var(--bg);
     color: var(--text);
     font-family: var(--sans);
     min-height: 100vh;
     overflow-x: hidden;
   }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2a2a3c; border-radius: 4px; }
 
-  /* ── HEADER ── */
+  /* ══════════════ HEADER ══════════════ */
   header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 28px;
-    background: var(--bg2);
+    padding: 12px 24px;
+    background: rgba(14,14,24,0.9);
+    backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 300;
   }
+  .logo-wrap { display: flex; align-items: center; gap: 10px; }
   .logo {
     font-family: var(--mono);
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: -0.5px;
   }
   .logo span { color: var(--red); }
   .badge-nda {
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 9px;
     background: var(--red-dim);
     color: var(--red);
     border: 1px solid var(--red);
-    padding: 3px 10px;
+    padding: 3px 9px;
     border-radius: 4px;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     animation: pulse-badge 2s infinite;
   }
-  @keyframes pulse-badge {
-    0%,100% { opacity: 1; }
-    50% { opacity: 0.5; }
+  @keyframes pulse-badge { 0%,100%{opacity:1} 50%{opacity:0.45} }
+  .header-right { display: flex; align-items: center; gap: 18px; }
+  .live-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); animation: blink 1.2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  .live-label { font-family: var(--mono); font-size: 11px; color: var(--green); letter-spacing: 1px; }
+  .header-stat { text-align: right; font-family: var(--mono); }
+  .header-stat b { color: var(--yellow); font-size: 13px; }
+  .header-stat small { display:block; color: var(--text-dim); font-size: 9px; letter-spacing: 1px; }
+
+  /* ══════════════ ALGORITHM MONITOR (fixed, top-right) ══════════════ */
+  .algo-monitor {
+    position: fixed;
+    top: 66px;
+    right: 18px;
+    width: 272px;
+    background: rgba(14,14,24,0.96);
+    border: 1px solid rgba(191,90,242,0.35);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(191,90,242,0.08);
+    z-index: 400;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
   }
-  .header-right {
+  .algo-monitor-head {
+    padding: 9px 12px;
+    background: linear-gradient(90deg, rgba(191,90,242,0.18), rgba(255,45,85,0.1));
+    border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: space-between;
   }
-  .live-dot {
-    width: 8px; height: 8px;
-    background: var(--green);
-    border-radius: 50%;
-    box-shadow: 0 0 8px var(--green);
-    animation: blink 1.2s infinite;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-  .live-label {
+  .algo-monitor-title {
     font-family: var(--mono);
-    font-size: 11px;
-    color: var(--green);
-    letter-spacing: 1px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: #e0c8ff;
+    display: flex; align-items: center; gap: 6px;
   }
+  .algo-monitor-count {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--green);
+    background: rgba(48,209,88,0.12);
+    border: 1px solid rgba(48,209,88,0.3);
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+  .algo-monitor-list { max-height: 340px; overflow-y: auto; }
+  .algo-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.35s ease;
+    position: relative;
+  }
+  .algo-row:last-child { border-bottom: none; }
+  .algo-row .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #3a3a4c;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+  .algo-row .info { flex: 1; min-width: 0; }
+  .algo-row .name {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    color: #9494ac;
+    letter-spacing: 0.3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: color 0.3s ease;
+  }
+  .algo-row .desc {
+    font-size: 8.5px;
+    color: #55556c;
+    margin-top: 1px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .algo-row .status {
+    font-family: var(--mono);
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #45455a;
+    flex-shrink: 0;
+  }
+  /* RUNNING state — green highlight requested */
+  .algo-row.running {
+    background: rgba(48,209,88,0.14);
+  }
+  .algo-row.running .dot {
+    background: var(--green-neon);
+    box-shadow: 0 0 8px var(--green-neon), 0 0 16px rgba(57,255,20,0.5);
+    animation: algo-pulse 0.9s ease-in-out infinite;
+  }
+  @keyframes algo-pulse { 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.5); } }
+  .algo-row.running .name { color: var(--green-neon); text-shadow: 0 0 6px rgba(57,255,20,0.4); }
+  .algo-row.running .status { color: var(--green-neon); }
+  .algo-row.running .status::before { content: '▶ '; }
+  .algo-row.running::after {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--green-neon);
+    box-shadow: 0 0 8px var(--green-neon);
+  }
+  .algo-row:not(.running) .status::before { content: '· '; }
 
-  /* ── MAIN LAYOUT ── */
+  /* ══════════════ MAIN LAYOUT ══════════════ */
   .main {
     display: grid;
     grid-template-columns: var(--phone-w) 1fr;
     gap: 0;
-    height: calc(100vh - 53px);
-    overflow: hidden;
+    min-height: calc(100vh - 53px);
   }
 
   /* ══ LEFT: PHONE ══ */
@@ -106,46 +200,46 @@
     background: var(--bg2);
     border-right: 1px solid var(--border);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    overflow: hidden;
+    padding: 22px 16px;
+    position: sticky;
+    top: 53px;
+    height: calc(100vh - 53px);
+  }
+  .phone-caption {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+    text-align: center;
   }
   .phone-frame {
-    width: 270px;
-    height: 560px;
+    width: 268px;
+    height: 552px;
     background: #1c1c1e;
     border-radius: 40px;
     border: 3px solid #3a3a3c;
-    box-shadow:
-      0 0 0 1px #000,
-      0 30px 80px rgba(0,0,0,0.9),
-      inset 0 1px 0 rgba(255,255,255,0.08);
+    box-shadow: 0 0 0 1px #000, 0 30px 80px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.08);
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
   }
   .phone-notch {
-    width: 90px;
-    height: 28px;
+    width: 90px; height: 24px;
     background: #1c1c1e;
     border-radius: 0 0 16px 16px;
     margin: 0 auto;
-    position: relative;
-    z-index: 10;
+    position: relative; z-index: 20;
     flex-shrink: 0;
   }
-  .phone-screen {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-  }
+  .phone-screen { flex: 1; overflow: hidden; position: relative; }
 
-  /* App screens */
   .app-screen {
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background: #f2f2f7;
     display: none;
     flex-direction: column;
@@ -154,329 +248,217 @@
   }
   .app-screen.active { display: flex; }
 
-  /* Screen: Home */
   .app-topbar {
     background: #fff;
     padding: 10px 14px 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
     box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+    flex-shrink: 0;
   }
-  .app-logo-text {
-    font-weight: 800;
-    font-size: 18px;
-    color: #e8142e;
+  .app-logo-text { font-weight: 800; font-size: 17px; color: #e8142e; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+  .cart-icon-btn {
+    position: relative;
+    width: 28px; height: 28px;
+    background: #f2f2f7;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .cart-icon-badge {
+    position: absolute; top: -4px; right: -4px;
+    background: #e8142e; color: #fff;
+    font-size: 8px; font-weight: 800;
+    min-width: 15px; height: 15px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 3px;
+    box-shadow: 0 0 0 2px #fff;
   }
   .app-avatar {
-    width: 30px; height: 30px;
+    width: 28px; height: 28px;
     background: linear-gradient(135deg, #ff6b6b, #ee0979);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
+    color: #fff; font-size: 11px; font-weight: 700;
   }
 
   .app-hero {
-    background: linear-gradient(160deg, #e8142e 0%, #c0002a 100%);
-    padding: 14px;
+    background: linear-gradient(160deg, #e8142e 0%, #a4001f 100%);
+    padding: 12px 14px;
     color: #fff;
+    flex-shrink: 0;
   }
-  .app-hero h3 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-  .app-hero p { font-size: 10px; opacity: 0.85; }
+  .app-hero h3 { font-size: 12.5px; font-weight: 700; margin-bottom: 3px; }
+  .app-hero p { font-size: 9.5px; opacity: 0.85; }
 
   .app-section-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: #1c1c1e;
-    padding: 10px 14px 6px;
-    letter-spacing: 0.3px;
+    font-size: 10.5px; font-weight: 700; color: #1c1c1e;
+    padding: 10px 14px 6px; letter-spacing: 0.3px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-shrink: 0;
   }
+  .app-section-title .see-all { font-size: 9px; color: #e8142e; font-weight: 600; }
 
-  .restaurant-list { padding: 0 14px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1; }
+  .restaurant-list { padding: 0 14px 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1; }
   .restaurant-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 10px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    cursor: pointer;
-    transition: transform 0.1s;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    background: #fff; border-radius: 12px; padding: 10px;
+    display: flex; gap: 10px; align-items: center; cursor: pointer;
+    transition: transform 0.1s; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   }
   .restaurant-card:active { transform: scale(0.98); }
   .rest-img {
-    width: 44px; height: 44px;
-    border-radius: 10px;
-    font-size: 22px;
+    width: 46px; height: 46px; border-radius: 10px; font-size: 24px;
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    background: #f5f5f7;
+    flex-shrink: 0; background: #f5f5f7;
   }
-  .rest-info { flex: 1; }
-  .rest-name { font-size: 12px; font-weight: 600; color: #1c1c1e; }
-  .rest-meta { font-size: 10px; color: #6b6b72; margin-top: 2px; }
+  .rest-info { flex: 1; min-width: 0; }
+  .rest-name { font-size: 12px; font-weight: 700; color: #1c1c1e; }
+  .rest-meta { font-size: 9.5px; color: #6b6b72; margin-top: 2px; }
   .rest-tag {
-    font-size: 9px;
-    background: #fff3cd;
-    color: #7d5d00;
-    border-radius: 4px;
-    padding: 2px 6px;
-    font-weight: 600;
-    margin-top: 4px;
-    display: inline-block;
+    font-size: 8.5px; background: #fff3cd; color: #7d5d00;
+    border-radius: 4px; padding: 2px 6px; font-weight: 700;
+    margin-top: 4px; display: inline-block;
   }
+  .rest-arrow { color: #c7c7cc; font-size: 14px; }
 
-  /* Screen: Restaurant */
+  /* Screen: Menu */
   .screen-header {
-    background: #fff;
-    padding: 10px 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+    background: #fff; padding: 10px 14px; display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.08); flex-shrink: 0;
   }
   .back-btn {
-    width: 26px; height: 26px;
-    background: #f2f2f7;
-    border-radius: 50%;
+    width: 26px; height: 26px; background: #f2f2f7; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    font-size: 13px;
-    color: #1c1c1e;
+    cursor: pointer; font-size: 13px; color: #1c1c1e; flex-shrink: 0;
   }
-  .screen-title { font-size: 13px; font-weight: 700; color: #1c1c1e; }
+  .screen-title { font-size: 13px; font-weight: 700; color: #1c1c1e; flex: 1; }
+  .screen-sub { font-size: 9px; color: #8e8e93; }
 
-  .menu-list { padding: 8px 14px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; }
+  .menu-list { padding: 8px 14px 4px; display: flex; flex-direction: column; gap: 7px; overflow-y: auto; flex: 1; }
   .menu-item {
-    background: #fff;
-    border-radius: 10px;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: #fff; border-radius: 10px; padding: 9px 10px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
-  .menu-item-info .item-name { font-size: 12px; font-weight: 600; color: #1c1c1e; }
-  .menu-item-info .item-desc { font-size: 9px; color: #8e8e93; margin-top: 2px; }
-  .item-price { font-size: 13px; font-weight: 700; color: #e8142e; }
+  .menu-item-emoji { font-size: 20px; flex-shrink: 0; }
+  .menu-item-info { flex: 1; min-width: 0; }
+  .menu-item-info .item-name { font-size: 11.5px; font-weight: 700; color: #1c1c1e; }
+  .menu-item-info .item-desc { font-size: 9px; color: #8e8e93; margin-top: 2px; line-height: 1.3; }
+  .item-price { font-size: 11.5px; font-weight: 700; color: #e8142e; margin-top: 3px; }
+  .menu-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+
   .add-btn {
-    background: #e8142e;
-    color: #fff;
-    border: none;
-    width: 24px; height: 24px;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    line-height: 1;
-    transition: background 0.15s;
+    background: #e8142e; color: #fff; border: none;
+    width: 24px; height: 24px; border-radius: 7px; font-size: 15px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    line-height: 1; transition: background 0.15s; font-weight: 700;
   }
   .add-btn:hover { background: #c0002a; }
+  .qty-stepper {
+    display: flex; align-items: center; gap: 0;
+    background: #fff3f5; border: 1px solid #e8142e; border-radius: 7px; overflow: hidden;
+  }
+  .qty-stepper button {
+    background: #e8142e; color: #fff; border: none; width: 22px; height: 22px;
+    font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; line-height: 1;
+  }
+  .qty-stepper button:hover { background: #c0002a; }
+  .qty-stepper .qty-num {
+    min-width: 22px; text-align: center; font-size: 11.5px; font-weight: 800; color: #1c1c1e;
+  }
+
+  .cart-float-bar {
+    position: absolute; left: 10px; right: 10px; bottom: 10px;
+    background: #1c1c1e; border-radius: 12px; padding: 11px 14px;
+    display: none; align-items: center; justify-content: space-between;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4); cursor: pointer;
+    animation: floatUp 0.25s ease;
+    z-index: 30;
+  }
+  .cart-float-bar.show { display: flex; }
+  @keyframes floatUp { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  .cart-float-left { display: flex; align-items: center; gap: 8px; }
+  .cart-float-badge {
+    background: #e8142e; color: #fff; font-size: 10px; font-weight: 800;
+    min-width: 19px; height: 19px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  }
+  .cart-float-bar .label { color: #fff; font-size: 11.5px; font-weight: 600; }
+  .cart-float-bar .amt { color: #ffd60a; font-size: 12.5px; font-weight: 800; }
 
   /* Screen: Cart */
-  .cart-list { padding: 10px 14px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+  .cart-scroll { flex: 1; overflow-y: auto; padding-bottom: 6px; }
+  .cart-list { padding: 10px 14px 4px; display: flex; flex-direction: column; gap: 6px; }
   .cart-item {
-    background: #fff;
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    background: #fff; border-radius: 10px; padding: 9px 10px;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    font-size: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
-  .cart-item-name { font-weight: 600; color: #1c1c1e; }
-  .cart-item-price { font-weight: 700; color: #e8142e; }
+  .cart-item-emoji { font-size: 17px; }
+  .cart-item-name { font-weight: 600; color: #1c1c1e; font-size: 11px; flex: 1; }
+  .cart-item-price { font-weight: 700; color: #e8142e; font-size: 11px; }
 
-  .fee-breakdown {
-    background: #fff;
-    margin: 0 14px;
-    border-radius: 12px;
-    padding: 10px 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-  }
-  .fee-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: #6b6b72;
-    padding: 3px 0;
-  }
+  .fee-breakdown { background: #fff; margin: 8px 14px 0; border-radius: 12px; padding: 10px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .fee-breakdown-title { font-size: 10px; font-weight: 700; color: #8e8e93; letter-spacing: 0.5px; margin-bottom: 4px; text-transform: uppercase; }
+  .fee-row { display: flex; justify-content: space-between; font-size: 11px; color: #6b6b72; padding: 3px 0; }
   .fee-row.highlight { color: #1c1c1e; font-weight: 600; }
   .fee-row.total { font-weight: 800; font-size: 13px; color: #1c1c1e; border-top: 1px solid #f2f2f7; margin-top: 4px; padding-top: 6px; }
-  .fee-tag {
-    font-size: 8px;
-    background: #e5f5ea;
-    color: #1c7a3a;
-    border-radius: 3px;
-    padding: 1px 4px;
-    margin-left: 4px;
-    vertical-align: middle;
-  }
+  .fee-tag { font-size: 7.5px; background: #e5f5ea; color: #1c7a3a; border-radius: 3px; padding: 1px 4px; margin-left: 4px; vertical-align: middle; }
+  .fee-tag.corp { background: #ffe8ea; color: #c0002a; }
 
-  .tip-section { padding: 8px 14px; }
+  .tip-section { padding: 8px 14px 0; }
   .tip-label { font-size: 10px; color: #6b6b72; margin-bottom: 6px; }
   .tip-options { display: flex; gap: 6px; }
   .tip-btn {
-    flex: 1;
-    padding: 7px 0;
-    background: #f2f2f7;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 600;
-    color: #1c1c1e;
-    cursor: pointer;
-    transition: all 0.15s;
+    flex: 1; padding: 7px 0; background: #f2f2f7; border: 2px solid transparent; border-radius: 8px;
+    font-size: 10.5px; font-weight: 600; color: #1c1c1e; cursor: pointer; transition: all 0.15s;
   }
-  .tip-btn.selected {
-    background: #fff3f5;
-    border-color: #e8142e;
-    color: #e8142e;
-  }
+  .tip-btn.selected { background: #fff3f5; border-color: #e8142e; color: #e8142e; }
 
-  .priority-section { padding: 0 14px 8px; }
+  .priority-section { padding: 8px 14px 0; }
   .priority-toggle {
-    background: #fff;
-    border-radius: 10px;
-    padding: 10px 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    cursor: pointer;
+    background: #fff; border-radius: 10px; padding: 10px 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06); cursor: pointer;
   }
   .priority-left { display: flex; flex-direction: column; gap: 2px; }
   .priority-name { font-size: 12px; font-weight: 600; color: #1c1c1e; }
   .priority-sub { font-size: 9px; color: #8e8e93; }
-  .toggle-switch {
-    width: 38px; height: 22px;
-    background: #e5e5ea;
-    border-radius: 11px;
-    position: relative;
-    transition: background 0.2s;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
+  .toggle-switch { width: 38px; height: 22px; background: #e5e5ea; border-radius: 11px; position: relative; transition: background 0.2s; cursor: pointer; flex-shrink: 0; }
   .toggle-switch.on { background: #30d158; }
-  .toggle-knob {
-    width: 18px; height: 18px;
-    background: #fff;
-    border-radius: 50%;
-    position: absolute;
-    top: 2px; left: 2px;
-    transition: left 0.2s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  }
+  .toggle-knob { width: 18px; height: 18px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
   .toggle-switch.on .toggle-knob { left: 18px; }
 
   .order-btn {
-    margin: 8px 14px;
-    background: #e8142e;
-    color: #fff;
-    border: none;
-    padding: 14px;
-    border-radius: 14px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    width: calc(100% - 28px);
-    transition: background 0.15s, transform 0.1s;
+    margin: 10px 14px 12px; background: #e8142e; color: #fff; border: none;
+    padding: 14px; border-radius: 14px; font-size: 13.5px; font-weight: 700; cursor: pointer;
+    width: calc(100% - 28px); transition: background 0.15s, transform 0.1s; flex-shrink: 0;
   }
   .order-btn:hover { background: #c0002a; }
   .order-btn:active { transform: scale(0.98); }
+  .order-btn:disabled { background: #d1d1d6; cursor: not-allowed; }
 
   /* Screen: Tracking */
-  .track-map {
-    height: 130px;
-    background: linear-gradient(135deg, #e8f4f8 0%, #d4eaf0 100%);
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-  .map-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,100,180,0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,100,180,0.08) 1px, transparent 1px);
-    background-size: 20px 20px;
-  }
-  .map-road-h {
-    position: absolute;
-    height: 6px;
-    background: #c8d9e0;
-    border-radius: 3px;
-  }
-  .map-road-v {
-    position: absolute;
-    width: 6px;
-    background: #c8d9e0;
-    border-radius: 3px;
-  }
-  .driver-dot {
-    width: 24px; height: 24px;
-    background: #e8142e;
-    border-radius: 50%;
-    position: absolute;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px;
-    box-shadow: 0 2px 8px rgba(232,20,46,0.5);
-    animation: drive 4s ease-in-out infinite;
-    z-index: 5;
-  }
-  @keyframes drive {
-    0% { left: 20%; top: 40%; }
-    25% { left: 40%; top: 30%; }
-    50% { left: 55%; top: 50%; }
-    75% { left: 65%; top: 35%; }
-    100% { left: 20%; top: 40%; }
-  }
-  .dest-pin {
-    position: absolute;
-    right: 20%; top: 30%;
-    font-size: 20px;
-    z-index: 5;
-  }
+  .track-map { height: 120px; background: linear-gradient(135deg, #e8f4f8 0%, #d4eaf0 100%); position: relative; overflow: hidden; flex-shrink: 0; }
+  .map-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(0,100,180,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,100,180,0.08) 1px, transparent 1px); background-size: 20px 20px; }
+  .driver-dot { width: 24px; height: 24px; background: #e8142e; border-radius: 50%; position: absolute; display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 8px rgba(232,20,46,0.5); animation: drive 4s ease-in-out infinite; z-index: 5; }
+  @keyframes drive { 0%{left:20%;top:40%} 25%{left:40%;top:30%} 50%{left:55%;top:50%} 75%{left:65%;top:35%} 100%{left:20%;top:40%} }
+  .dest-pin { position: absolute; right: 20%; top: 30%; font-size: 18px; z-index: 5; }
 
-  .track-info { padding: 10px 14px; }
-  .track-eta { font-size: 22px; font-weight: 800; color: #1c1c1e; }
-  .track-eta span { font-size: 12px; font-weight: 500; color: #6b6b72; margin-left: 4px; }
-  .track-status { font-size: 11px; color: #6b6b72; margin-top: 2px; }
+  .track-info { padding: 10px 14px 6px; flex-shrink: 0; }
+  .track-eta { font-size: 21px; font-weight: 800; color: #1c1c1e; }
+  .track-eta span { font-size: 11px; font-weight: 500; color: #6b6b72; margin-left: 4px; }
+  .track-status { font-size: 10.5px; color: #6b6b72; margin-top: 2px; }
 
-  .driver-card {
-    background: #fff;
-    margin: 6px 14px;
-    border-radius: 12px;
-    padding: 10px 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-  }
-  .driver-avatar {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, #6c757d, #495057);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-  .driver-name { font-size: 12px; font-weight: 600; color: #1c1c1e; }
-  .driver-pay-visible { font-size: 10px; color: #30d158; font-weight: 600; }
+  .driver-card { background: #fff; margin: 6px 14px; border-radius: 12px; padding: 9px 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); flex-shrink: 0; }
+  .driver-avatar { width: 34px; height: 34px; background: linear-gradient(135deg, #6c757d, #495057); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .driver-name { font-size: 11.5px; font-weight: 600; color: #1c1c1e; }
+  .driver-pay-visible { font-size: 9.5px; color: #30d158; font-weight: 600; }
 
-  .track-steps { padding: 0 14px; flex: 1; overflow-y: auto; }
-  .step { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; }
-  .step-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: #d1d1d6;
-    margin-top: 3px;
-    flex-shrink: 0;
-  }
+  .track-steps { padding: 2px 14px; flex: 1; overflow-y: auto; }
+  .step { display: flex; gap: 10px; align-items: flex-start; padding: 5px 0; }
+  .step-dot { width: 10px; height: 10px; border-radius: 50%; background: #d1d1d6; margin-top: 3px; flex-shrink: 0; }
   .step-dot.done { background: #30d158; box-shadow: 0 0 6px rgba(48,209,88,0.6); }
   .step-dot.active { background: #e8142e; animation: blink 1s infinite; }
   .step-text { font-size: 10px; color: #6b6b72; }
@@ -484,608 +466,260 @@
   .step-text.active { color: #e8142e; font-weight: 600; }
 
   /* ══ RIGHT: DASHBOARD ══ */
-  .dashboard {
-    background: var(--bg);
-    overflow-y: auto;
-    padding: 20px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+  .dashboard { background: transparent; padding: 20px 24px 60px; display: flex; flex-direction: column; gap: 16px; max-width: 1180px; }
 
-  .dash-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  .dash-title {
-    font-size: 11px;
-    font-family: var(--mono);
-    color: var(--text-dim);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .dash-subtitle {
-    font-size: 22px;
-    font-weight: 900;
-    color: var(--text);
-    line-height: 1.1;
-  }
+  .dash-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .dash-title { font-size: 11px; font-family: var(--mono); color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .dash-subtitle { font-size: 21px; font-weight: 900; color: var(--text); line-height: 1.15; }
   .dash-subtitle span { color: var(--red); }
 
-  .order-counter {
-    text-align: right;
-  }
-  .order-count-num {
-    font-family: var(--mono);
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--yellow);
-    line-height: 1;
-  }
-  .order-count-label {
-    font-size: 10px;
-    color: var(--text-dim);
-    font-family: var(--mono);
-  }
+  .dash-stats-row { display: flex; gap: 10px; }
+  .dash-stat-box { text-align: center; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; min-width: 84px; }
+  .dash-stat-box .n { font-family: var(--mono); font-size: 18px; font-weight: 700; }
+  .dash-stat-box .l { font-size: 8.5px; color: var(--text-dim); font-family: var(--mono); letter-spacing: 0.5px; margin-top: 2px; }
+  .dash-stat-box.yellow .n { color: var(--yellow); }
+  .dash-stat-box.blue .n { color: var(--blue); }
+  .dash-stat-box.red .n { color: var(--red); }
 
-  /* SECTION */
-  .section {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .section-head {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .section-head-title {
-    font-size: 11px;
-    font-family: var(--mono);
-    color: var(--text-dim);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 980px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .section { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .section-head { padding: 11px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .section-head-title { font-size: 10.5px; font-family: var(--mono); color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
   .section-head-title .icon { font-size: 13px; }
-  .section-badge {
-    font-family: var(--mono);
-    font-size: 9px;
-    padding: 2px 8px;
-    border-radius: 4px;
-    letter-spacing: 1px;
-    font-weight: 700;
-  }
+  .section-badge { font-family: var(--mono); font-size: 9px; padding: 2px 8px; border-radius: 4px; letter-spacing: 1px; font-weight: 700; }
   .badge-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,45,85,0.3); }
   .badge-yellow { background: rgba(255,214,10,0.12); color: var(--yellow); border: 1px solid rgba(255,214,10,0.3); }
   .badge-green { background: rgba(48,209,88,0.12); color: var(--green); border: 1px solid rgba(48,209,88,0.3); }
   .badge-blue { background: rgba(10,132,255,0.12); color: var(--blue); border: 1px solid rgba(10,132,255,0.3); }
+  .badge-purple { background: rgba(191,90,242,0.12); color: var(--purple); border: 1px solid rgba(191,90,242,0.3); }
 
   /* MONEY SPLIT */
   .money-split { padding: 16px; }
-  .split-order-total {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-  }
-  .split-order-total span {
-    color: var(--yellow);
-    font-size: 16px;
-    font-weight: 700;
-  }
-  .split-bar {
-    height: 32px;
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    margin-bottom: 10px;
-    position: relative;
-  }
-  .split-seg {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 700;
-    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
-    position: relative;
-    overflow: hidden;
-  }
-  .split-seg.corp {
-    background: linear-gradient(90deg, #0a84ff, #0060cc);
-    color: #fff;
-  }
-  .split-seg.driver {
-    background: linear-gradient(90deg, #ff453a, #c0002a);
-    color: #fff;
-  }
-  .split-seg.fee {
-    background: linear-gradient(90deg, #bf5af2, #9b40cc);
-    color: #fff;
-  }
-  .split-seg.tip {
-    background: linear-gradient(90deg, #ffd60a, #cc9900);
-    color: #000;
-  }
-  .split-legend { display: flex; flex-wrap: wrap; gap: 8px; }
-  .legend-item {
-    display: flex; align-items: center; gap: 5px;
-    font-size: 10px;
-    font-family: var(--mono);
-    color: var(--text-dim);
-  }
-  .legend-dot {
-    width: 8px; height: 8px;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
+  .split-order-total { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 10px; }
+  .split-order-total span { color: var(--yellow); font-size: 16px; font-weight: 700; }
+  .split-bar { height: 32px; border-radius: 8px; overflow: hidden; display: flex; margin-bottom: 10px; position: relative; }
+  .split-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; font-weight: 700; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: hidden; }
+  .split-seg.corp { background: linear-gradient(90deg, #0a84ff, #0060cc); color: #fff; }
+  .split-seg.driver { background: linear-gradient(90deg, #ff453a, #c0002a); color: #fff; }
+  .split-seg.fee { background: linear-gradient(90deg, #bf5af2, #9b40cc); color: #fff; }
+  .split-seg.tip { background: linear-gradient(90deg, #ffd60a, #cc9900); color: #000; }
+  .split-legend { display: flex; flex-wrap: wrap; gap: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; font-family: var(--mono); color: var(--text-dim); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
   .legend-dot.corp { background: #0a84ff; }
   .legend-dot.driver { background: #ff453a; }
   .legend-dot.fee { background: #bf5af2; }
   .legend-dot.tip { background: #ffd60a; }
 
-  /* ALGORITHMS GRID */
+  /* ALGORITHMS GRID (dashboard cards) */
   .algo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; }
-  .algo-card {
-    background: var(--bg3);
-    border-radius: 10px;
-    padding: 12px;
-    border: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-  }
-  .algo-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-  .algo-card.red::before { background: var(--red); }
-  .algo-card.yellow::before { background: var(--yellow); }
-  .algo-card.blue::before { background: var(--blue); }
-  .algo-card.purple::before { background: var(--purple); }
-  .algo-card-title {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .algo-value {
-    font-family: var(--mono);
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 3px;
-  }
-  .algo-sub {
-    font-size: 9px;
-    color: var(--text-dim);
-    line-height: 1.4;
-  }
-  .algo-card.red .algo-value { color: var(--red); }
-  .algo-card.yellow .algo-value { color: var(--yellow); }
-  .algo-card.blue .algo-value { color: var(--blue); }
-  .algo-card.purple .algo-value { color: var(--purple); }
+  .algo-card { background: var(--bg3); border-radius: 10px; padding: 12px; border: 1px solid var(--border); position: relative; overflow: hidden; transition: box-shadow 0.3s; }
+  .algo-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .algo-card.red::before { background: var(--red); } .algo-card.yellow::before { background: var(--yellow); }
+  .algo-card.blue::before { background: var(--blue); } .algo-card.purple::before { background: var(--purple); }
+  .algo-card-title { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .algo-value { font-family: var(--mono); font-size: 19px; font-weight: 700; line-height: 1; margin-bottom: 3px; }
+  .algo-sub { font-size: 9px; color: var(--text-dim); line-height: 1.4; }
+  .algo-card.red .algo-value { color: var(--red); } .algo-card.yellow .algo-value { color: var(--yellow); }
+  .algo-card.blue .algo-value { color: var(--blue); } .algo-card.purple .algo-value { color: var(--purple); }
+  .algo-card.flash { box-shadow: 0 0 0 2px var(--green-neon), 0 0 20px rgba(57,255,20,0.35); }
 
-  /* DESPERATION SCORE */
+  /* DESPERATION SCORE roster */
   .descore-section { padding: 14px 16px; }
-  .descore-driver {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--bg3);
-    border-radius: 10px;
-    padding: 10px 12px;
-    margin-bottom: 10px;
-    border: 1px solid var(--border);
-  }
-  .descore-avatar {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    background: #2a2a3a;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-  .descore-name { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
-  .descore-meta { font-size: 10px; color: var(--text-dim); font-family: var(--mono); }
-  .descore-score-badge {
-    margin-left: auto;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-  .score-high { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,45,85,0.3); }
-  .score-low { background: rgba(48,209,88,0.12); color: var(--green); border: 1px solid rgba(48,209,88,0.3); }
+  .descore-driver { display: flex; align-items: center; gap: 10px; background: var(--bg3); border-radius: 10px; padding: 9px 11px; margin-bottom: 8px; border: 1px solid var(--border); transition: border-color 0.3s, background 0.3s; }
+  .descore-driver.assigned { border-color: var(--red); background: rgba(255,45,85,0.08); }
+  .descore-avatar { width: 32px; height: 32px; border-radius: 50%; background: #2a2a3a; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+  .descore-info { flex: 1; min-width: 0; }
+  .descore-name { font-size: 11px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
+  .descore-tagline { font-size: 8.5px; color: var(--text-dim); margin-top: 1px; }
+  .descore-bar-track { height: 6px; background: #26263a; border-radius: 3px; margin-top: 5px; overflow: hidden; }
+  .descore-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease, background 0.6s ease; }
+  .descore-score { font-family: var(--mono); font-weight: 800; font-size: 15px; width: 40px; text-align: right; flex-shrink: 0; }
+  .descore-pill { font-size: 7.5px; font-family: var(--mono); font-weight: 700; padding: 1px 5px; border-radius: 8px; margin-left: 4px; }
+  .assigned-note { font-family: var(--mono); font-size: 9.5px; color: var(--red); margin-top: 4px; padding: 6px 8px; background: rgba(255,45,85,0.08); border-radius: 6px; border: 1px dashed rgba(255,45,85,0.3); display: none; }
+  .assigned-note.show { display: block; }
 
-  .descore-explanation {
-    background: var(--bg3);
-    border-radius: 10px;
-    padding: 10px 12px;
-    border-left: 3px solid var(--red);
-  }
-  .descore-code {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    line-height: 1.8;
-  }
-  .descore-code .k { color: var(--purple); }
-  .descore-code .s { color: var(--green); }
-  .descore-code .n { color: var(--yellow); }
-  .descore-code .c { color: #636374; }
-  .descore-code .highlight { color: var(--red); font-weight: 700; }
+  /* Tip theft compare */
+  .tip-sim-wrap { display: flex; gap: 10px; padding: 14px 16px; }
+  .tip-sim-box { flex: 1; background: var(--bg3); border-radius: 10px; padding: 12px; text-align: center; border: 1px solid var(--border); }
+  .ts-label { font-family: var(--mono); font-size: 8.5px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 6px; }
+  .ts-val { font-family: var(--mono); font-size: 17px; font-weight: 800; }
+  .ts-base { font-size: 9.5px; color: var(--text-dim); margin-top: 4px; }
 
-  /* DAY EARNINGS CHART */
-  .earnings-section { padding: 14px 16px; }
-  .earnings-vs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-  .earns-box {
-    flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    text-align: center;
-  }
-  .earns-box.company {
-    background: rgba(10,132,255,0.1);
-    border: 1px solid rgba(10,132,255,0.25);
-  }
-  .earns-box.driver {
-    background: rgba(255,69,58,0.1);
-    border: 1px solid rgba(255,69,58,0.25);
-  }
-  .earns-label { font-size: 9px; font-family: var(--mono); color: var(--text-dim); margin-bottom: 4px; letter-spacing: 1px; }
-  .earns-amount {
-    font-family: var(--mono);
-    font-size: 20px;
-    font-weight: 700;
-    line-height: 1;
-  }
-  .earns-box.company .earns-amount { color: var(--blue); }
-  .earns-box.driver .earns-amount { color: var(--driver); }
-  .earns-box .earns-note { font-size: 9px; color: var(--text-dim); margin-top: 3px; }
+  /* Fee flow */
+  .fee-flow-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 14px 16px; }
+  .fee-flow-card { background: var(--bg3); border-radius: 10px; padding: 11px; border: 1px solid var(--border); }
+  .ff-name { font-family: var(--mono); font-size: 9.5px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .ff-row { display: flex; justify-content: space-between; font-size: 9.5px; padding: 2px 0; }
+  .ff-row .lbl { color: var(--text-dim); }
+  .ff-row .to-corp { color: var(--red); font-weight: 700; }
+  .ff-row .to-driver { color: var(--green); font-weight: 700; }
+  .ff-bar { height: 5px; border-radius: 3px; overflow: hidden; display: flex; margin-top: 6px; background: #26263a; }
+  .ff-bar-corp { height: 100%; background: linear-gradient(90deg, #ff453a, #c0002a); }
+  .ff-bar-driver { height: 100%; background: linear-gradient(90deg, #30d158, #1c9e42); }
 
-  .hours-bar-wrap { margin-top: 4px; }
-  .hours-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 5px;
-  }
-  .hours-label { font-family: var(--mono); font-size: 9px; color: var(--text-dim); width: 30px; text-align: right; flex-shrink: 0; }
-  .hours-bar {
-    flex: 1;
-    height: 16px;
-    background: var(--bg3);
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
-  }
-  .hours-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.8s ease;
-    display: flex;
-    align-items: center;
-    padding-left: 6px;
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .hours-fill.corp { background: linear-gradient(90deg, #0a84ff80, #0060cc60); color: var(--blue); }
-  .hours-fill.drv { background: linear-gradient(90deg, #ff453a60, #c0002a40); color: var(--driver); }
+  /* Daily earnings compare */
+  .earns-section { padding: 14px 16px; }
+  .earns-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .earns-label { font-family: var(--mono); font-size: 9.5px; width: 64px; flex-shrink: 0; color: var(--text-dim); }
+  .earns-bar-track { flex: 1; height: 22px; background: var(--bg3); border-radius: 6px; overflow: hidden; }
+  .earns-bar { height: 100%; display: flex; align-items: center; padding: 0 8px; font-family: var(--mono); font-size: 10px; font-weight: 700; color: #fff; transition: width 0.8s ease; white-space: nowrap; }
+  #bar-corp { background: linear-gradient(90deg, #0a84ff, #0060cc); }
+  #bar-drv { background: linear-gradient(90deg, #ff453a, #c0002a); }
 
-  /* FEES REVEAL */
-  .fee-reveal { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
-  .fee-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px 12px;
-    background: var(--bg3);
-    border-radius: 10px;
-    border: 1px solid var(--border);
-  }
-  .fee-item-icon { font-size: 18px; flex-shrink: 0; }
-  .fee-item-body { flex: 1; }
-  .fee-item-name { font-size: 11px; font-weight: 600; margin-bottom: 2px; }
-  .fee-item-desc { font-size: 10px; color: var(--text-dim); line-height: 1.4; }
-  .fee-item-amount {
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-  .fee-item-amount.red { color: var(--red); }
-  .fee-item-amount.green { color: var(--green); }
-
-  /* RUNNING STATS */
-  .running-stats {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  .stat-item { text-align: center; }
-  .stat-num {
-    font-family: var(--mono);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--yellow);
-    line-height: 1;
-  }
-  .stat-label { font-size: 9px; color: var(--text-dim); margin-top: 3px; font-family: var(--mono); }
-
-  /* PRIORITY SCAM REVEAL */
-  .priority-reveal { padding: 14px 16px; }
-  .priority-compare {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-  .prio-box {
-    flex: 1;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--bg3);
-    text-align: center;
-  }
-  .prio-box-label { font-size: 10px; font-weight: 600; margin-bottom: 6px; }
-  .prio-time {
-    font-family: var(--mono);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--yellow);
-  }
-  .prio-time-sub { font-size: 9px; color: var(--text-dim); margin-top: 2px; }
-  .prio-code-note {
-    background: var(--bg3);
-    border-radius: 8px;
-    padding: 8px 12px;
-    border-left: 3px solid var(--yellow);
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    line-height: 1.7;
-  }
-  .prio-code-note .highlight { color: var(--yellow); }
-  .prio-code-note .red { color: var(--red); }
-
-  /* LOG */
-  .algo-log { padding: 10px 16px; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; }
-  .log-entry {
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    display: flex;
-    gap: 8px;
-    align-items: flex-start;
-    animation: fadeInLog 0.3s ease;
-  }
-  @keyframes fadeInLog { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
-  .log-time { color: var(--text-dim); flex-shrink: 0; }
-  .log-type { font-weight: 700; flex-shrink: 0; min-width: 55px; }
-  .log-msg { color: var(--text-dim); }
-  .log-entry.warn { background: rgba(255,214,10,0.06); }
-  .log-entry.warn .log-type { color: var(--yellow); }
-  .log-entry.err { background: rgba(255,45,85,0.06); }
-  .log-entry.err .log-type { color: var(--red); }
-  .log-entry.info { background: rgba(10,132,255,0.06); }
+  /* LOG TERMINAL */
+  .log-terminal { background: #050508; font-family: var(--mono); font-size: 10.5px; height: 220px; overflow-y: auto; padding: 10px 12px; }
+  .log-entry { display: flex; gap: 8px; padding: 2px 0; line-height: 1.5; }
+  .log-time { color: #45455a; flex-shrink: 0; }
+  .log-type { flex-shrink: 0; font-weight: 700; min-width: 92px; }
   .log-entry.info .log-type { color: var(--blue); }
-  .log-entry.ok { background: rgba(48,209,88,0.06); }
+  .log-entry.warn .log-type { color: var(--yellow); }
+  .log-entry.err .log-type { color: var(--red); }
   .log-entry.ok .log-type { color: var(--green); }
+  .log-msg { color: #a0a0b8; }
 
-  /* NOTIFICATION BANNER */
+  /* NOTIFICATION */
   .notif-banner {
-    position: fixed;
-    bottom: 20px;
-    right: 24px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--red);
-    border-radius: 10px;
-    padding: 12px 16px;
-    max-width: 300px;
-    font-size: 11px;
-    font-family: var(--mono);
-    line-height: 1.5;
-    color: var(--text-dim);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    z-index: 200;
-    animation: slideIn 0.3s ease;
-    display: none;
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%) translateY(-120%);
+    background: #1c1c1e; color: #fff; border-radius: 14px; padding: 12px 16px;
+    display: flex; gap: 10px; align-items: flex-start; width: 340px; max-width: 90vw;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 999; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
   }
-  .notif-banner.show { display: block; }
-  @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; } }
-  .notif-title { color: var(--red); font-weight: 700; margin-bottom: 4px; font-size: 11px; }
+  .notif-banner.show { transform: translateX(-50%) translateY(0); }
+  .notif-icon { font-size: 20px; flex-shrink: 0; }
+  .notif-title { font-size: 12px; font-weight: 700; }
+  .notif-body { font-size: 10.5px; color: #b0b0c0; margin-top: 2px; line-height: 1.4; }
 
-  /* scrollbar */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 2px; }
+  .footer-note {
+    font-family: var(--mono); font-size: 9.5px; color: var(--text-dim); text-align: center;
+    padding: 18px 24px 30px; line-height: 1.6; max-width: 1180px;
+  }
+  .footer-note b { color: var(--red); }
 
-  .tip-theft-note {
-    background: var(--bg3);
-    border-radius: 8px;
-    padding: 8px 12px;
-    border-left: 3px solid var(--purple);
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    line-height: 1.7;
-    margin-top: 6px;
+  @media (max-width: 860px) {
+    .main { grid-template-columns: 1fr; }
+    .phone-panel { position: relative; top: 0; height: auto; }
+    .algo-monitor { position: static; width: auto; margin: 12px 24px 0; }
   }
-  .tip-theft-note .p { color: var(--purple); }
-
-  .tip-sim {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-  }
-  .tip-sim-box {
-    flex: 1;
-    padding: 8px 10px;
-    background: var(--bg3);
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    text-align: center;
-  }
-  .tip-sim-box .ts-label { font-size: 9px; font-family: var(--mono); color: var(--text-dim); margin-bottom: 4px; }
-  .tip-sim-box .ts-val {
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-  }
-  .tip-sim-box .ts-base { font-size: 9px; color: var(--text-dim); margin-top: 2px; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">Deliver<span>X</span> <span style="font-size:11px;color:var(--text-dim);font-weight:400">// Algorithm Expose</span></div>
+  <div class="logo-wrap">
+    <div class="logo">Deliver<span>X</span></div>
+    <div class="badge-nda">INTERNAL BUILD · NDA LEAKED</div>
+  </div>
   <div class="header-right">
+    <div class="header-stat">
+      <b id="hdr-orders">0</b>
+      <small>ĐƠN ĐÃ XỬ LÝ</small>
+    </div>
     <div class="live-dot"></div>
-    <div class="live-label">LIVE SIMULATION</div>
-    <div class="badge-nda">⚠ NDA LEAK</div>
+    <div class="live-label">LIVE ENGINE</div>
   </div>
 </header>
 
+<!-- Fixed top-right algorithm monitor -->
+<div class="algo-monitor" id="algo-monitor">
+  <div class="algo-monitor-head">
+    <div class="algo-monitor-title">🧠 THUẬT TOÁN ĐANG CHẠY</div>
+    <div class="algo-monitor-count" id="algo-active-count">0 active</div>
+  </div>
+  <div class="algo-monitor-list" id="algo-monitor-list"></div>
+</div>
+
 <div class="main">
 
-  <!-- ═══ LEFT: PHONE ═══ -->
+  <!-- ═══════════════ LEFT: PHONE ═══════════════ -->
   <div class="phone-panel">
+    <div class="phone-caption">MÔ PHỎNG ỨNG DỤNG KHÁCH HÀNG</div>
     <div class="phone-frame">
       <div class="phone-notch"></div>
       <div class="phone-screen">
 
-        <!-- Screen 0: Home -->
+        <!-- HOME -->
         <div class="app-screen active" id="screen-home">
           <div class="app-topbar">
-            <div class="app-logo-text">🍕 DeliverX</div>
-            <div class="app-avatar">NV</div>
+            <div class="app-logo-text">DeliverX</div>
+            <div class="topbar-right">
+              <div class="cart-icon-btn" onclick="if(state.currentRestaurant) goTo('screen-cart')">
+                🛒
+                <div class="cart-icon-badge" id="home-cart-badge" style="display:none">0</div>
+              </div>
+              <div class="app-avatar">A</div>
+            </div>
           </div>
           <div class="app-hero">
-            <h3>Giao hàng siêu tốc! 🚀</h3>
-            <p>Đặt ngay — ship trong 25 phút</p>
+            <h3>🔥 Miễn phí ship đơn từ 99k</h3>
+            <p>Bật Priority Delivery để "giao nhanh hơn" — thật không?</p>
           </div>
-          <div class="app-section-title">Gần bạn</div>
-          <div class="restaurant-list">
-            <div class="restaurant-card" onclick="goTo('screen-restaurant','Bún bò Huế Cô Lan')">
-              <div class="rest-img">🍜</div>
-              <div class="rest-info">
-                <div class="rest-name">Bún Bò Cô Lan</div>
-                <div class="rest-meta">⭐ 4.8 · 1.2 km · 20-30 phút</div>
-                <div class="rest-tag">Phổ biến</div>
-              </div>
-            </div>
-            <div class="restaurant-card" onclick="goTo('screen-restaurant','Cơm tấm Sài Gòn')">
-              <div class="rest-img">🍚</div>
-              <div class="rest-info">
-                <div class="rest-name">Cơm Tấm Sài Gòn</div>
-                <div class="rest-meta">⭐ 4.6 · 0.8 km · 15-25 phút</div>
-                <div class="rest-tag">Bán chạy</div>
-              </div>
-            </div>
-            <div class="restaurant-card" onclick="goTo('screen-restaurant','Pizza House')">
-              <div class="rest-img">🍕</div>
-              <div class="rest-info">
-                <div class="rest-name">Pizza House</div>
-                <div class="rest-meta">⭐ 4.5 · 2.1 km · 30-40 phút</div>
-              </div>
-            </div>
-            <div class="restaurant-card" onclick="goTo('screen-restaurant','Trà sữa MilkTea')">
-              <div class="rest-img">🧋</div>
-              <div class="rest-info">
-                <div class="rest-name">Trà Sữa MilkTea</div>
-                <div class="rest-meta">⭐ 4.7 · 0.5 km · 10-20 phút</div>
-                <div class="rest-tag">Mới</div>
-              </div>
-            </div>
-          </div>
+          <div class="app-section-title"><span>Nhà hàng gần bạn</span><span class="see-all">Xem tất cả</span></div>
+          <div class="restaurant-list" id="restaurant-list"></div>
         </div>
 
-        <!-- Screen 1: Restaurant Menu -->
-        <div class="app-screen" id="screen-restaurant">
+        <!-- MENU -->
+        <div class="app-screen" id="screen-menu">
           <div class="screen-header">
-            <div class="back-btn" onclick="goTo('screen-home')">‹</div>
-            <div class="screen-title" id="rest-screen-title">Nhà hàng</div>
+            <div class="back-btn" onclick="goTo('screen-home')">←</div>
+            <div>
+              <div class="screen-title" id="menu-title">Nhà hàng</div>
+              <div class="screen-sub" id="menu-sub">Chọn món</div>
+            </div>
           </div>
-          <div class="menu-list" id="menu-list">
-            <!-- populated by JS -->
-          </div>
-          <div style="padding:8px 14px">
-            <button class="order-btn" onclick="goTo('screen-cart')" style="margin:0">Xem giỏ hàng 🛒</button>
+          <div class="menu-list" id="menu-list"></div>
+          <div class="cart-float-bar" id="cart-float-bar" onclick="goTo('screen-cart')">
+            <div class="cart-float-left">
+              <div class="cart-float-badge" id="float-cart-count">0</div>
+              <div class="label">Xem giỏ hàng</div>
+            </div>
+            <div class="amt" id="float-cart-total">0đ</div>
           </div>
         </div>
 
-        <!-- Screen 2: Cart -->
+        <!-- CART -->
         <div class="app-screen" id="screen-cart">
           <div class="screen-header">
-            <div class="back-btn" onclick="goTo('screen-restaurant')">‹</div>
-            <div class="screen-title">Giỏ hàng</div>
-          </div>
-          <div class="cart-list" id="cart-list"></div>
-
-          <div class="fee-breakdown" id="fee-breakdown"></div>
-
-          <div class="tip-section">
-            <div class="tip-label">Tiền tip cho tài xế 💚</div>
-            <div class="tip-options">
-              <button class="tip-btn" onclick="setTip(0,this)">Không</button>
-              <button class="tip-btn selected" onclick="setTip(10000,this)">10k</button>
-              <button class="tip-btn" onclick="setTip(20000,this)">20k</button>
-              <button class="tip-btn" onclick="setTip(50000,this)">50k</button>
+            <div class="back-btn" onclick="goTo('screen-menu')">←</div>
+            <div>
+              <div class="screen-title">Giỏ hàng &amp; Thanh toán</div>
+              <div class="screen-sub" id="cart-sub">0 món</div>
             </div>
           </div>
+          <div class="cart-scroll">
+            <div class="cart-list" id="cart-list"></div>
 
-          <div class="priority-section">
-            <div class="priority-toggle" onclick="togglePriority()">
-              <div class="priority-left">
-                <div class="priority-name">⚡ Ưu tiên giao hàng</div>
-                <div class="priority-sub">Thêm 29.000đ · Nhanh hơn 15 phút</div>
+            <div class="fee-breakdown" id="fee-breakdown"></div>
+
+            <div class="tip-section">
+              <div class="tip-label">💰 Tip cho tài xế (không bắt buộc)</div>
+              <div class="tip-options">
+                <button class="tip-btn" onclick="selectTip(0,this)">0đ</button>
+                <button class="tip-btn" onclick="selectTip(10000,this)">10k</button>
+                <button class="tip-btn selected" onclick="selectTip(20000,this)">20k</button>
+                <button class="tip-btn" onclick="selectTip(50000,this)">50k</button>
               </div>
-              <div class="toggle-switch" id="priority-toggle">
-                <div class="toggle-knob"></div>
+            </div>
+
+            <div class="priority-section">
+              <div class="priority-toggle" onclick="togglePriority()">
+                <div class="priority-left">
+                  <div class="priority-name">⚡ Priority Delivery</div>
+                  <div class="priority-sub">+29.000đ · "giao nhanh hơn"</div>
+                </div>
+                <div class="toggle-switch" id="priority-toggle"><div class="toggle-knob"></div></div>
               </div>
             </div>
           </div>
-
-          <button class="order-btn" onclick="placeOrder()">Đặt hàng · <span id="total-display">0đ</span></button>
+          <button class="order-btn" id="order-btn" onclick="placeOrder()">Đặt hàng</button>
         </div>
 
-        <!-- Screen 3: Tracking -->
+        <!-- TRACKING -->
         <div class="app-screen" id="screen-tracking">
           <div class="track-map">
             <div class="map-grid"></div>
-            <div class="map-road-h" style="top:35%;left:0;right:0"></div>
-            <div class="map-road-h" style="top:65%;left:0;right:0"></div>
-            <div class="map-road-v" style="left:30%;top:0;bottom:0"></div>
-            <div class="map-road-v" style="left:60%;top:0;bottom:0"></div>
             <div class="driver-dot">🛵</div>
             <div class="dest-pin">📍</div>
           </div>
@@ -1094,562 +728,656 @@
             <div class="track-status" id="track-status">Tài xế đang lấy đơn...</div>
           </div>
           <div class="driver-card">
-            <div class="driver-avatar">👨</div>
+            <div class="driver-avatar">🧑</div>
             <div>
-              <div class="driver-name">Nguyễn Văn Tài</div>
-              <div class="driver-pay-visible" id="driver-pay-shown">Thu nhập đơn này: <span id="driver-shown-amount">đang tính...</span></div>
+              <div class="driver-name" id="track-driver-name">Nguyễn Văn Tài</div>
+              <div class="driver-pay-visible">Tài xế nhận: <span id="driver-shown-amount">0đ</span></div>
             </div>
           </div>
           <div class="track-steps">
-            <div class="step"><div class="step-dot done"></div><div class="step-text done">Đơn đã được xác nhận</div></div>
-            <div class="step"><div class="step-dot done"></div><div class="step-text done">Nhà hàng đang chuẩn bị</div></div>
-            <div class="step"><div class="step-dot active" id="step3dot"></div><div class="step-text active" id="step3text">Tài xế đang di chuyển</div></div>
-            <div class="step"><div class="step-dot" id="step4dot"></div><div class="step-text" id="step4text">Giao đến bạn</div></div>
+            <div class="step"><div class="step-dot done"></div><div class="step-text done">Đơn hàng đã xác nhận</div></div>
+            <div class="step"><div class="step-dot done" id="step2dot"></div><div class="step-text done" id="step2text">Nhà hàng đang chuẩn bị món</div></div>
+            <div class="step"><div class="step-dot active" id="step3dot"></div><div class="step-text active" id="step3text">Tài xế đang lấy đơn</div></div>
+            <div class="step"><div class="step-dot" id="step4dot"></div><div class="step-text" id="step4text">Đang giao đến bạn</div></div>
+            <div class="step"><div class="step-dot" id="step5dot"></div><div class="step-text" id="step5text">Hoàn tất</div></div>
           </div>
+          <button class="order-btn" style="background:#1c1c1e" onclick="goTo('screen-home')">Đặt đơn khác</button>
         </div>
 
-      </div><!-- phone-screen -->
-    </div><!-- phone-frame -->
+      </div>
+    </div>
   </div>
 
-  <!-- ═══ RIGHT: DASHBOARD ═══ -->
+  <!-- ═══════════════ RIGHT: DASHBOARD ═══════════════ -->
   <div class="dashboard">
+
     <div class="dash-header">
       <div>
-        <div class="dash-title">BACKEND SYSTEM MONITOR</div>
-        <div class="dash-subtitle">Những gì họ <span>KHÔNG</span> muốn bạn thấy</div>
+        <div class="dash-title">// backend_visibility_mode = TRUE</div>
+        <div class="dash-subtitle">Bảng điều khiển thuật toán <span>DeliverX</span></div>
       </div>
-      <div class="order-counter">
-        <div class="order-count-num" id="total-orders">0</div>
-        <div class="order-count-label">ĐƠN HÀNG</div>
-      </div>
-    </div>
-
-    <!-- Running stats -->
-    <div class="running-stats">
-      <div class="stat-item">
-        <div class="stat-num" id="stat-corp">0đ</div>
-        <div class="stat-label">CÔNG TY THU</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num" id="stat-driver" style="color:var(--driver)">0đ</div>
-        <div class="stat-label">TÀI XẾ NHẬN</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num" id="stat-ratio" style="color:var(--purple)">—</div>
-        <div class="stat-label">TỶ LỆ CORP/DRIVER</div>
+      <div class="dash-stats-row">
+        <div class="dash-stat-box yellow"><div class="n" id="stat-orders">0</div><div class="l">ĐƠN HÀNG</div></div>
+        <div class="dash-stat-box blue"><div class="n" id="stat-corp">0đ</div><div class="l">CÔNG TY THU</div></div>
+        <div class="dash-stat-box red"><div class="n" id="stat-driver">0đ</div><div class="l">TÀI XẾ NHẬN</div></div>
+        <div class="dash-stat-box"><div class="n" id="stat-ratio">—</div><div class="l">TỶ LỆ</div></div>
       </div>
     </div>
 
-    <!-- Money Split -->
+    <!-- Money split -->
     <div class="section">
       <div class="section-head">
-        <div class="section-head-title"><span class="icon">💰</span> PHÂN CHIA TIỀN ĐƠN HÀNG</div>
-        <div class="section-badge badge-red">REAL-TIME</div>
+        <div class="section-head-title"><span class="icon">💸</span>Dòng tiền đơn hàng gần nhất</div>
+        <div class="section-badge badge-blue">MONEY SPLIT</div>
       </div>
       <div class="money-split">
-        <div class="split-order-total">Tổng đơn: <span id="split-total">—</span></div>
-        <div class="split-bar" id="split-bar">
-          <div class="split-seg corp" id="seg-corp" style="width:0%">—</div>
-          <div class="split-seg driver" id="seg-driver" style="width:0%">—</div>
-          <div class="split-seg fee" id="seg-fee" style="width:0%">—</div>
-          <div class="split-seg tip" id="seg-tip" style="width:0%">—</div>
+        <div class="split-order-total">TỔNG ĐƠN: <span id="split-total">0đ</span></div>
+        <div class="split-bar">
+          <div class="split-seg corp" id="seg-corp" style="width:0%"></div>
+          <div class="split-seg driver" id="seg-driver" style="width:0%"></div>
+          <div class="split-seg fee" id="seg-fee" style="width:0%"></div>
+          <div class="split-seg tip" id="seg-tip" style="width:0%"></div>
         </div>
         <div class="split-legend">
-          <div class="legend-item"><div class="legend-dot corp"></div>Công ty (<span id="leg-corp">—</span>)</div>
-          <div class="legend-item"><div class="legend-dot driver"></div>Tài xế (<span id="leg-driver">—</span>)</div>
-          <div class="legend-item"><div class="legend-dot fee"></div>Phí ẩn (<span id="leg-fee">—</span>)</div>
-          <div class="legend-item"><div class="legend-dot tip"></div>Tip (<span id="leg-tip">—</span>)</div>
+          <div class="legend-item"><div class="legend-dot corp"></div>Công ty giữ: <b id="leg-corp" style="color:#fff">0đ</b></div>
+          <div class="legend-item"><div class="legend-dot driver"></div>Tài xế nhận: <b id="leg-driver" style="color:#fff">0đ</b></div>
+          <div class="legend-item"><div class="legend-dot fee"></div>Phí phụ thu: <b id="leg-fee" style="color:#fff">0đ</b></div>
+          <div class="legend-item"><div class="legend-dot tip"></div>Tip hiển thị: <b id="leg-tip" style="color:#fff">0đ</b></div>
         </div>
       </div>
     </div>
 
-    <!-- Algorithm Stats -->
+    <!-- Algo cards -->
     <div class="section">
       <div class="section-head">
-        <div class="section-head-title"><span class="icon">⚙️</span> THUẬT TOÁN NỘI BỘ</div>
-        <div class="section-badge badge-yellow">CLASSIFIED</div>
+        <div class="section-head-title"><span class="icon">⚙️</span>Chỉ số thuật toán thời gian thực</div>
+        <div class="section-badge badge-red">LIVE</div>
       </div>
       <div class="algo-grid">
-        <div class="algo-card red">
+        <div class="algo-card yellow" id="card-priority">
           <div class="algo-card-title">Priority Flag</div>
           <div class="algo-value" id="algo-priority">FALSE</div>
-          <div class="algo-sub" id="algo-priority-sub">Dispatch logic IGNORES flag.<br>Boolean trong DB, không tác dụng.</div>
+          <div class="algo-sub">Delay đơn thường: <b id="algo-delay">+0 phút</b></div>
         </div>
-        <div class="algo-card yellow">
-          <div class="algo-card-title">Delay Injected</div>
-          <div class="algo-value" id="algo-delay">+0 phút</div>
-          <div class="algo-sub">Đơn thường bị trì hoãn nhân tạo<br>để Priority "có vẻ" nhanh hơn.</div>
+        <div class="algo-card red" id="card-basepay">
+          <div class="algo-card-title">Dynamic Base Pay</div>
+          <div class="algo-value" id="algo-base">70.000đ</div>
+          <div class="algo-sub" id="algo-base-sub">Chưa có dữ liệu tip</div>
         </div>
-        <div class="algo-card blue">
-          <div class="algo-card-title">Base Pay (tài xế)</div>
-          <div class="algo-value" id="algo-base">—</div>
-          <div class="algo-sub" id="algo-base-sub">Động: dự đoán tip cao → trả base thấp</div>
+        <div class="algo-card purple" id="card-desp">
+          <div class="algo-card-title">Avg Desperation Score</div>
+          <div class="algo-value" id="algo-desp-avg">—</div>
+          <div class="algo-sub">Trên 1.247 tài xế đang hoạt động</div>
         </div>
-        <div class="algo-card purple">
-          <div class="algo-card-title">Driver Score</div>
-          <div class="algo-value" id="algo-descore">HIGH</div>
-          <div class="algo-sub" id="algo-descore-sub">"High Desperation" → Nhận đơn rác<br>Đơn tốt dành cho driver casual.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Priority Scam -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-head-title"><span class="icon">⚡</span> PHÍ ƯU TIÊN — SCAM A/B TEST</div>
-        <div class="section-badge badge-yellow">EXPOSED</div>
-      </div>
-      <div class="priority-reveal">
-        <div class="priority-compare">
-          <div class="prio-box">
-            <div class="prio-box-label" style="color:var(--yellow)">⚡ Priority (29k)</div>
-            <div class="prio-time" id="prio-time-fast">22 phút</div>
-            <div class="prio-time-sub">Thực tế không thay đổi</div>
-          </div>
-          <div class="prio-box">
-            <div class="prio-box-label" style="color:var(--text-dim)">Standard (free)</div>
-            <div class="prio-time" id="prio-time-slow" style="color:var(--text-dim)">34 phút</div>
-            <div class="prio-time-sub" style="color:var(--red)">Bị delay nhân tạo +12 phút</div>
-          </div>
-        </div>
-        <div class="prio-code-note">
-          <span class="highlight">// dispatch_engine.js v4.7.2</span><br>
-          <span class="red">if</span> (order.is_priority === <span class="highlight">true</span>) {<br>
-          &nbsp;&nbsp;<span class="red">// TODO: implement actual speed boost</span><br>
-          &nbsp;&nbsp;return dispatch(order); <span class="red">// ← same as standard</span><br>
-          } else {<br>
-          &nbsp;&nbsp;<span class="highlight">delay(randomBetween(5, 12)); // A/B test</span><br>
-          &nbsp;&nbsp;return dispatch(order);<br>
-          }
+        <div class="algo-card blue" id="card-margin">
+          <div class="algo-card-title">Company Margin</div>
+          <div class="algo-value" id="algo-margin">—</div>
+          <div class="algo-sub">% GMV công ty giữ lại</div>
         </div>
       </div>
     </div>
 
-    <!-- Desperation Score -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-head-title"><span class="icon">😰</span> DESPERATION SCORE ENGINE</div>
-        <div class="section-badge badge-red">INTERNAL ONLY</div>
+    <div class="grid-2">
+      <!-- Desperation Score roster -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-head-title"><span class="icon">📉</span>Desperation Score Engine</div>
+          <div class="section-badge badge-purple">INTERNAL</div>
+        </div>
+        <div class="descore-section" id="descore-list"></div>
+        <div class="assigned-note" id="assigned-note" style="margin:0 16px 14px"></div>
       </div>
-      <div class="descore-section">
-        <div class="descore-driver">
-          <div class="descore-avatar">👨</div>
-          <div>
-            <div class="descore-name">Nguyễn Văn Tài</div>
-            <div class="descore-meta">Login: 22:00 hàng ngày · Accept rate: 98%</div>
-          </div>
-          <div class="descore-score-badge score-high">HIGH DESP</div>
+
+      <!-- Tip theft sim -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-head-title"><span class="icon">🤐</span>Tip Prediction → Base Pay</div>
+          <div class="section-badge badge-yellow">A/B TEST</div>
         </div>
-        <div class="descore-driver">
-          <div class="descore-avatar">👩</div>
-          <div>
-            <div class="descore-name">Trần Thị My (Casual)</div>
-            <div class="descore-meta">Login: cuối tuần · Accept rate: 61%</div>
-          </div>
-          <div class="descore-score-badge score-low">LOW DESP</div>
-        </div>
-        <div class="descore-explanation">
-          <div class="descore-code">
-            <span class="k">function</span> <span class="n">assignOrder</span>(driver, order) {<br>
-            &nbsp;&nbsp;<span class="k">if</span> (driver.<span class="highlight">desperation_score</span> === <span class="s">"HIGH"</span>) {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;<span class="c">// Driver sẽ nhận dù lương thấp</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;order.offer_price = <span class="highlight">baseRate * 0.4</span>; <span class="c">// 40%</span><br>
-            &nbsp;&nbsp;} <span class="k">else</span> {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;<span class="c">// Casual driver: cần "gamify"</span><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;order.offer_price = <span class="highlight">baseRate * 1.2</span>; <span class="c">// 120%</span><br>
-            &nbsp;&nbsp;}<br>
-            }
-          </div>
+        <div class="tip-sim-wrap" id="tip-sim"></div>
+        <div style="padding:0 16px 14px; font-size:9.5px; color:var(--text-dim); font-family:var(--mono); line-height:1.5;">
+          Mô hình dự đoán tip càng cao → lương cơ bản trả trước càng bị hạ thấp. Tổng thu nhập tài xế gần như không đổi, nhưng phần công ty phải trả giảm mạnh.
         </div>
       </div>
     </div>
 
-    <!-- Tip Theft 2.0 -->
+    <!-- Fee flow -->
     <div class="section">
       <div class="section-head">
-        <div class="section-head-title"><span class="icon">💸</span> TIP THEFT 2.0 — PREDICTIVE MODEL</div>
-        <div class="section-badge badge-purple" style="background:rgba(191,90,242,0.12);color:var(--purple);border:1px solid rgba(191,90,242,0.3)">ALGORITHM</div>
+        <div class="section-head-title"><span class="icon">🧾</span>Phân bổ các khoản phí "hỗ trợ tài xế"</div>
+        <div class="section-badge badge-red">FEE ROUTER</div>
       </div>
-      <div style="padding: 14px 16px;">
-        <div class="tip-theft-note">
-          <span class="p">// tip_prediction_model.py</span><br>
-          predicted_tip = model.predict(user_history)<br>
-          <span class="p">if</span> predicted_tip &gt; 50000:<br>
-          &nbsp;&nbsp;base_pay = <span class="p">MIN_BASE</span> <span style="color:var(--text-dim)"># Tip cao → trả base thấp</span><br>
-          <span class="p">else</span>:<br>
-          &nbsp;&nbsp;base_pay = <span class="p">HIGH_BASE</span> <span style="color:var(--text-dim)"># Không tip → trả base cao</span><br>
-          <span style="color:var(--red)"># Kết quả: tip của bạn subsidize công ty</span>
+      <div class="fee-flow-grid" id="fee-flow-grid"></div>
+    </div>
+
+    <!-- Daily earnings -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-head-title"><span class="icon">📊</span>Ước tính thu nhập / ngày (30 đơn)</div>
+        <div class="section-badge badge-blue">PROJECTION</div>
+      </div>
+      <div class="earns-section">
+        <div class="earns-row">
+          <div class="earns-label">CÔNG TY</div>
+          <div class="earns-bar-track"><div class="earns-bar" id="bar-corp" style="width:5%">0đ</div></div>
         </div>
-        <div class="tip-sim" id="tip-sim">
-          <div class="tip-sim-box">
-            <div class="ts-label">BẠN TIP NHIỀU (50k)</div>
-            <div class="ts-val" style="color:var(--driver)">Base: 20.000đ</div>
-            <div class="ts-base">Tài xế nhận: 70k tổng</div>
-          </div>
-          <div class="tip-sim-box">
-            <div class="ts-label">BẠN KHÔNG TIP</div>
-            <div class="ts-val" style="color:var(--blue)">Base: 70.000đ</div>
-            <div class="ts-base">Tài xế nhận: 70k tổng</div>
-          </div>
+        <div class="earns-row">
+          <div class="earns-label">TÀI XẾ</div>
+          <div class="earns-bar-track"><div class="earns-bar" id="bar-drv" style="width:5%">0đ</div></div>
         </div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:8px;padding:8px 10px;background:var(--red-dim);border-radius:6px;color:var(--red)">
-          → Dù bạn tip hay không, tài xế nhận số tiền gần như nhau. Tip của bạn đi vào túi công ty.
-        </div>
+        <div id="earns-note" style="font-size:9.5px; color:var(--text-dim); font-family:var(--mono); margin-top:6px;"></div>
       </div>
     </div>
 
-    <!-- Fee Reveal -->
+    <!-- Log terminal -->
     <div class="section">
       <div class="section-head">
-        <div class="section-head-title"><span class="icon">🎭</span> PHÍ "PHÚC LỢI" TÀI XẾ — SỰ THẬT</div>
-        <div class="section-badge badge-red">SCAM</div>
-      </div>
-      <div class="fee-reveal">
-        <div class="fee-item">
-          <div class="fee-item-icon">⚡</div>
-          <div class="fee-item-body">
-            <div class="fee-item-name" style="color:var(--yellow)">Phí Ưu Tiên (Priority Fee)</div>
-            <div class="fee-item-desc">Hiển thị như "nhanh hơn 15 phút" nhưng dispatch logic không thay đổi. A/B test: làm chậm đơn thường, không tăng tốc đơn Priority.</div>
-          </div>
-          <div class="fee-item-amount red">→ CORP</div>
-        </div>
-        <div class="fee-item">
-          <div class="fee-item-icon">🚗</div>
-          <div class="fee-item-body">
-            <div class="fee-item-name" style="color:var(--blue)">Driver Benefit Fee (1.5$)</div>
-            <div class="fee-item-desc">Thiết kế để bạn nghĩ "mình đang giúp tài xế". Thực tế: 100% vào quỹ vận động hành lang chống công đoàn tài xế — "Policy Defense" cost center.</div>
-          </div>
-          <div class="fee-item-amount red">→ CORP</div>
-        </div>
-        <div class="fee-item">
-          <div class="fee-item-icon">💡</div>
-          <div class="fee-item-body">
-            <div class="fee-item-name" style="color:var(--green)">Tip của khách</div>
-            <div class="fee-item-desc">Predictive model: nếu bạn tip nhiều, base pay tài xế bị hạ tương ứng. Tài xế nhận ~như nhau. Phần chênh lệch thuộc công ty.</div>
-          </div>
-          <div class="fee-item-amount red">→ CORP</div>
-        </div>
-        <div class="fee-item">
-          <div class="fee-item-icon">📦</div>
-          <div class="fee-item-body">
-            <div class="fee-item-name">Phí Giao Hàng (Ship Fee)</div>
-            <div class="fee-item-desc">Tài xế nhận khoảng 30-40%. Phần còn lại là margin công ty và hoa hồng nhà hàng.</div>
-          </div>
-          <div class="fee-item-amount green" id="fee-driver-pct">≈35% → Driver</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Day Earnings -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-head-title"><span class="icon">📊</span> THU NHẬP NGÀY CỦA TÀI XẾ VS CÔNG TY</div>
-        <div class="section-badge badge-blue">SIMULATION</div>
-      </div>
-      <div class="earnings-section">
-        <div class="earnings-vs">
-          <div class="earns-box company">
-            <div class="earns-label">CÔNG TY (30 đơn/ngày)</div>
-            <div class="earns-amount" id="earns-corp">0đ</div>
-            <div class="earns-note">Fees + margin + slush fund</div>
-          </div>
-          <div class="earns-box driver">
-            <div class="earns-label">TÀI XẾ (10h/ngày)</div>
-            <div class="earns-amount" id="earns-driver">0đ</div>
-            <div class="earns-note">Sau xăng, khấu hao xe</div>
-          </div>
-        </div>
-        <div class="hours-bar-wrap">
-          <div class="hours-row">
-            <div class="hours-label">Corp</div>
-            <div class="hours-bar"><div class="hours-fill corp" id="bar-corp" style="width:0%"></div></div>
-          </div>
-          <div class="hours-row">
-            <div class="hours-label">Driver</div>
-            <div class="hours-bar"><div class="hours-fill drv" id="bar-drv" style="width:0%"></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Algorithm Log -->
-    <div class="section">
-      <div class="section-head">
-        <div class="section-head-title"><span class="icon">📋</span> SYSTEM LOG — BACKEND</div>
+        <div class="section-head-title"><span class="icon">📟</span>System Log — backend.deliverx.internal</div>
         <div class="section-badge badge-green">STREAMING</div>
       </div>
-      <div class="algo-log" id="algo-log">
-        <div class="log-entry info">
-          <span class="log-time">00:00</span>
-          <span class="log-type">[INIT]</span>
-          <span class="log-msg">DeliverX Algorithm Engine v7.3.1 started</span>
-        </div>
-        <div class="log-entry warn">
-          <span class="log-time">00:01</span>
-          <span class="log-type">[WARN]</span>
-          <span class="log-msg">Driver desperation_score recalibration scheduled</span>
-        </div>
-      </div>
+      <div class="log-terminal" id="algo-log"></div>
     </div>
 
-  </div><!-- dashboard -->
-</div><!-- main -->
+    <div class="footer-note">
+      Đây là mô phỏng giáo dục dựa trên một bài đăng chưa được kiểm chứng, không nhằm cáo buộc bất kỳ công ty cụ thể nào.
+      Toàn bộ số liệu, tên nhà hàng, tên tài xế và thuật toán trong <b>DeliverX</b> đều là hư cấu, phục vụ mục đích minh họa về dark patterns trong nền kinh tế nền tảng.
+    </div>
+  </div>
+</div>
 
-<!-- Notification Banner -->
+<!-- Notification -->
 <div class="notif-banner" id="notif-banner">
-  <div class="notif-title" id="notif-title">SYSTEM ALERT</div>
-  <div id="notif-body">...</div>
+  <div class="notif-icon">🔔</div>
+  <div>
+    <div class="notif-title" id="notif-title">Thông báo</div>
+    <div class="notif-body" id="notif-body"></div>
+  </div>
 </div>
 
 <script>
 // ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const RESTAURANTS = [
+  { id:'pho', name:'Phở Hạnh Phúc', emoji:'🍜', rating:4.8, time:'20-30 phút', tag:'Phổ biến', menu:[
+    {id:'pho-bo', name:'Phở Bò Đặc Biệt', desc:'Bánh phở tươi, thịt bò tái nạm gân', price:55000, emoji:'🍜'},
+    {id:'pho-ga', name:'Phở Gà', desc:'Nước dùng gà ninh xương, thịt gà xé', price:48000, emoji:'🍲'},
+    {id:'bun-cha', name:'Bún Chả Hà Nội', desc:'Chả nướng than hoa, bún, nước chấm', price:52000, emoji:'🍢'},
+    {id:'goi-cuon', name:'Gỏi Cuốn Tôm Thịt', desc:'2 cuốn tôm thịt, rau sống, mắm nêm', price:35000, emoji:'🥗'},
+    {id:'che-ba-mau', name:'Chè Ba Màu', desc:'Đậu xanh, đậu đỏ, thạch, nước cốt dừa', price:20000, emoji:'🍧'},
+  ]},
+  { id:'pizza', name:'Pizza Ý Ngon', emoji:'🍕', rating:4.6, time:'25-35 phút', tag:'Ưu đãi -20%', menu:[
+    {id:'pizza-hs', name:'Pizza Hải Sản', desc:'Tôm, mực, phô mai Mozzarella kéo sợi', price:129000, emoji:'🍕'},
+    {id:'pizza-pm', name:'Pizza 4 Phô Mai', desc:'Béo ngậy, đế giòn nướng than', price:99000, emoji:'🍕'},
+    {id:'mi-y', name:'Mì Ý Sốt Bò Bằm', desc:'Sốt cà chua bò bằm kiểu Ý', price:65000, emoji:'🍝'},
+    {id:'salad-caesar', name:'Salad Caesar', desc:'Xà lách, ức gà áp chảo, sốt Caesar', price:45000, emoji:'🥗'},
+    {id:'coca', name:'Coca-Cola Lon', desc:'330ml, phục vụ lạnh', price:12000, emoji:'🥤'},
+  ]},
+  { id:'tra-sua', name:'Trà Sữa Ngọt Ngào', emoji:'🧋', rating:4.9, time:'15-25 phút', tag:'Bán chạy', menu:[
+    {id:'ts-tran-chau', name:'Trà Sữa Trân Châu', desc:'Trân châu đen dai, trà đậm vị', price:39000, emoji:'🧋'},
+    {id:'tra-dao', name:'Trà Đào Cam Sả', desc:'Đào miếng, cam tươi, sả thơm mát', price:42000, emoji:'🍑'},
+    {id:'matcha-latte', name:'Matcha Latte', desc:'Bột trà xanh Nhật, sữa tươi béo', price:45000, emoji:'🍵'},
+    {id:'banh-flan', name:'Bánh Flan Caramel', desc:'Béo mịn, vị caramel đắng nhẹ', price:18000, emoji:'🍮'},
+  ]},
+  { id:'com-tam', name:'Cơm Tấm Sài Gòn', emoji:'🍚', rating:4.7, time:'20-30 phút', tag:'Gần bạn', menu:[
+    {id:'ct-suon', name:'Cơm Tấm Sườn Bì Chả', desc:'Sườn nướng, bì, chả trứng, mỡ hành', price:45000, emoji:'🍚'},
+    {id:'ga-xoi-mo', name:'Cơm Gà Xối Mỡ', desc:'Gà chiên giòn da, cơm dẻo nóng', price:42000, emoji:'🍗'},
+    {id:'canh-chua', name:'Canh Chua Cá Lóc', desc:'Vị chua thanh dịu, cá lóc tươi', price:35000, emoji:'🍲'},
+    {id:'cha-trung', name:'Chả Trứng Hấp', desc:'Trứng hấp thịt bằm mềm mịn', price:20000, emoji:'🍳'},
+  ]},
+  { id:'ga-ran', name:'Gà Rán Giòn Tan', emoji:'🍗', rating:4.5, time:'20-30 phút', tag:'Mới ra mắt', menu:[
+    {id:'ga-mieng', name:'Gà Rán Giòn (2 miếng)', desc:'Tẩm bột giòn rụm, vị cay nhẹ', price:59000, emoji:'🍗'},
+    {id:'khoai-tay', name:'Khoai Tây Chiên', desc:'Giòn rụm, phần lớn ăn thỏa thích', price:25000, emoji:'🍟'},
+    {id:'burger-ga', name:'Burger Gà Phô Mai', desc:'Gà giòn, phô mai, sốt đặc biệt', price:49000, emoji:'🍔'},
+    {id:'pepsi', name:'Pepsi Lon', desc:'330ml, phục vụ lạnh', price:12000, emoji:'🥤'},
+  ]},
+];
+
+const DRIVERS = [
+  { name:'Nguyễn Văn Tài', emoji:'🧑', base:38 },
+  { name:'Trần Thị Hương', emoji:'👩', base:52 },
+  { name:'Lê Minh Đức', emoji:'👨', base:71 },
+  { name:'Phạm Thu Trang', emoji:'👩‍🦱', base:29 },
+  { name:'Hoàng Văn Sơn', emoji:'👨‍🦲', base:83 },
+];
+
+const ALGOS = [
+  { key:'priority', label:'PRIORITY_DISPATCH_ENGINE', desc:'Kiểm tra cờ ưu tiên & điều phối đơn' },
+  { key:'delay', label:'AB_DELAY_INJECTOR', desc:'Làm chậm đơn thường để tạo cảm giác' },
+  { key:'desperation', label:'DESPERATION_SCORE_ENGINE', desc:'Tính điểm "tuyệt vọng" của tài xế' },
+  { key:'tippredict', label:'TIP_PREDICTION_MODEL', desc:'Dự đoán khả năng khách sẽ tip' },
+  { key:'basepay', label:'DYNAMIC_BASE_PAY_ADJUSTER', desc:'Hạ / nâng lương cơ bản theo dự đoán' },
+  { key:'feerouter', label:'FEE_ROUTING_ENGINE', desc:'Phân bổ phí phụ thu về quỹ công ty' },
+];
+
+// ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
 const state = {
-  currentRestaurant: '',
-  cart: [],
-  tip: 10000,
+  currentRestaurant: null,
+  cart: {},           // itemId -> qty
+  tip: 20000,
   priorityOn: false,
   totalOrders: 0,
   totalCorp: 0,
   totalDriver: 0,
+  driverScores: DRIVERS.map(d => d.base),
   trackingInterval: null,
 };
 
-const MENUS = {
-  'Bún bò Huế Cô Lan': [
-    { name: 'Bún Bò đặc biệt', price: 55000, desc: 'Gân, chả, móng' },
-    { name: 'Bún Bò thường', price: 45000, desc: 'Bò, rau thơm' },
-    { name: 'Chả giò', price: 25000, desc: '4 cuộn/phần' },
-    { name: 'Nước ép cam', price: 20000, desc: 'Tươi nguyên chất' },
-  ],
-  'Cơm tấm Sài Gòn': [
-    { name: 'Cơm tấm sườn bì', price: 60000, desc: 'Sườn nướng, bì, chả' },
-    { name: 'Cơm tấm gà', price: 55000, desc: 'Đùi gà nướng sả' },
-    { name: 'Trà đá', price: 10000, desc: 'Ngọt vừa' },
-  ],
-  'Pizza House': [
-    { name: 'Pizza Margherita M', price: 120000, desc: 'Cà chua, phô mai tươi' },
-    { name: 'Pizza Pepperoni L', price: 160000, desc: 'Xúc xích, phô mai kéo' },
-    { name: 'Mì Ý bò bằm', price: 85000, desc: 'Sốt bolognese' },
-    { name: 'Nước ngọt lon', price: 15000, desc: 'Pepsi / 7Up' },
-  ],
-  'Trà sữa MilkTea': [
-    { name: 'Trà sữa truyền thống', price: 35000, desc: 'Size L, đường 50%' },
-    { name: 'Matcha đá xay', price: 45000, desc: 'Topping pudding' },
-    { name: 'Hồng trà sữa tươi', price: 40000, desc: 'Sữa tươi nguyên kem' },
-  ],
-};
-
-const fmt = (n) => n.toLocaleString('vi-VN') + 'đ';
-const fmtK = (n) => {
-  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
-  if (n >= 1000) return (n/1000).toFixed(0) + 'K';
-  return n + '';
-};
-
 // ══════════════════════════════════════════
-// SCREEN NAVIGATION
+// UTIL
 // ══════════════════════════════════════════
-function goTo(screenId, arg) {
+function fmt(n) { return Math.round(n).toLocaleString('vi-VN') + 'đ'; }
+function cartCount() { return Object.values(state.cart).reduce((s,q) => s+q, 0); }
+function cartSubtotal() {
+  if (!state.currentRestaurant) return 0;
+  const menu = state.currentRestaurant.menu;
+  let sum = 0;
+  for (const id in state.cart) {
+    const item = menu.find(m => m.id === id);
+    if (item) sum += item.price * state.cart[id];
+  }
+  return sum;
+}
+function goTo(id) {
   document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
-
-  if (screenId === 'screen-restaurant' && arg) {
-    state.currentRestaurant = arg;
-    document.getElementById('rest-screen-title').textContent = arg;
-    renderMenu();
-  }
-  if (screenId === 'screen-cart') {
-    renderCart();
-  }
+  document.getElementById(id).classList.add('active');
 }
 
 // ══════════════════════════════════════════
-// MENU & CART
+// ALGORITHM MONITOR (top-right, green = running)
+// ══════════════════════════════════════════
+const algoTimers = {};
+function initAlgoMonitor() {
+  const list = document.getElementById('algo-monitor-list');
+  list.innerHTML = ALGOS.map(a => `
+    <div class="algo-row" id="algo-row-${a.key}">
+      <div class="dot"></div>
+      <div class="info">
+        <div class="name">${a.label}</div>
+        <div class="desc">${a.desc}</div>
+      </div>
+      <div class="status">idle</div>
+    </div>
+  `).join('');
+}
+function triggerAlgo(key, ms=1600) {
+  const row = document.getElementById('algo-row-' + key);
+  if (!row) return;
+  row.classList.add('running');
+  row.querySelector('.status').textContent = 'ĐANG CHẠY';
+  clearTimeout(algoTimers[key]);
+  algoTimers[key] = setTimeout(() => {
+    row.classList.remove('running');
+    row.querySelector('.status').textContent = 'idle';
+    updateActiveCount();
+  }, ms);
+  updateActiveCount();
+}
+function updateActiveCount() {
+  const n = document.querySelectorAll('.algo-row.running').length;
+  document.getElementById('algo-active-count').textContent = n + ' active';
+}
+// background "always working" cycle
+setInterval(() => {
+  const a = ALGOS[Math.floor(Math.random() * ALGOS.length)];
+  triggerAlgo(a.key, 1200);
+}, 2200);
+
+// ══════════════════════════════════════════
+// RENDER: HOME
+// ══════════════════════════════════════════
+function renderHome() {
+  document.getElementById('restaurant-list').innerHTML = RESTAURANTS.map(r => `
+    <div class="restaurant-card" onclick="openRestaurant('${r.id}')">
+      <div class="rest-img">${r.emoji}</div>
+      <div class="rest-info">
+        <div class="rest-name">${r.name}</div>
+        <div class="rest-meta">⭐ ${r.rating} · ${r.time}</div>
+        <div class="rest-tag">${r.tag}</div>
+      </div>
+      <div class="rest-arrow">›</div>
+    </div>
+  `).join('');
+  updateHomeCartBadge();
+}
+function updateHomeCartBadge() {
+  const badge = document.getElementById('home-cart-badge');
+  const n = cartCount();
+  if (n > 0) { badge.style.display = 'flex'; badge.textContent = n; }
+  else badge.style.display = 'none';
+}
+
+function openRestaurant(id) {
+  const r = RESTAURANTS.find(x => x.id === id);
+  if (state.currentRestaurant && state.currentRestaurant.id !== id && cartCount() > 0) {
+    const ok = confirm('Giỏ hàng đang có món từ "' + state.currentRestaurant.name + '". Bắt đầu đơn mới sẽ xoá giỏ hàng hiện tại. Tiếp tục?');
+    if (!ok) return;
+    state.cart = {};
+  }
+  state.currentRestaurant = r;
+  document.getElementById('menu-title').textContent = r.name;
+  document.getElementById('menu-sub').textContent = '⭐ ' + r.rating + ' · ' + r.time;
+  renderMenu();
+  goTo('screen-menu');
+}
+
+// ══════════════════════════════════════════
+// RENDER: MENU
 // ══════════════════════════════════════════
 function renderMenu() {
-  const items = MENUS[state.currentRestaurant] || [];
-  const list = document.getElementById('menu-list');
-  list.innerHTML = '';
-  items.forEach((item, i) => {
-    list.innerHTML += `
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="item-name">${item.name}</div>
-          <div class="item-desc">${item.desc}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div class="item-price">${fmt(item.price)}</div>
-          <button class="add-btn" onclick="addToCart(${i})">+</button>
-        </div>
-      </div>`;
-  });
+  const r = state.currentRestaurant;
+  if (!r) return;
+  document.getElementById('menu-list').innerHTML = r.menu.map(item => {
+    const qty = state.cart[item.id] || 0;
+    return `
+    <div class="menu-item">
+      <div class="menu-item-emoji">${item.emoji}</div>
+      <div class="menu-item-info">
+        <div class="item-name">${item.name}</div>
+        <div class="item-desc">${item.desc}</div>
+        <div class="item-price">${fmt(item.price)}</div>
+      </div>
+      <div class="menu-item-right">
+        ${qty === 0
+          ? `<button class="add-btn" onclick="changeQty('${item.id}',1)">+</button>`
+          : `<div class="qty-stepper">
+               <button onclick="changeQty('${item.id}',-1)">−</button>
+               <div class="qty-num" id="qty-${item.id}">${qty}</div>
+               <button onclick="changeQty('${item.id}',1)">+</button>
+             </div>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+  updateCartFloatBar();
+  updateHomeCartBadge();
 }
 
-function addToCart(idx) {
-  const items = MENUS[state.currentRestaurant];
-  const item = items[idx];
-  const existing = state.cart.find(c => c.name === item.name);
-  if (existing) existing.qty++;
-  else state.cart.push({ ...item, qty: 1 });
-  addLog('info', '[CART]', `Added: ${item.name} — ${fmt(item.price)}`);
+function changeQty(itemId, delta) {
+  const cur = state.cart[itemId] || 0;
+  const next = Math.max(0, Math.min(20, cur + delta));
+  if (next === 0) delete state.cart[itemId];
+  else state.cart[itemId] = next;
+  renderMenu();
+  if (document.getElementById('screen-cart').classList.contains('active')) renderCart();
 }
 
-function renderCart() {
-  if (state.cart.length === 0) {
-    state.cart = [{ name: 'Bún Bò đặc biệt', price: 55000, qty: 1 }];
+function updateCartFloatBar() {
+  const bar = document.getElementById('cart-float-bar');
+  const n = cartCount();
+  if (n > 0) {
+    bar.classList.add('show');
+    document.getElementById('float-cart-count').textContent = n;
+    document.getElementById('float-cart-total').textContent = fmt(cartSubtotal());
+  } else {
+    bar.classList.remove('show');
   }
-  const list = document.getElementById('cart-list');
-  list.innerHTML = '';
-  state.cart.forEach(item => {
-    list.innerHTML += `
-      <div class="cart-item">
-        <div><div class="cart-item-name">${item.qty}× ${item.name}</div></div>
-        <div class="cart-item-price">${fmt(item.price * item.qty)}</div>
-      </div>`;
-  });
+}
+
+// ══════════════════════════════════════════
+// RENDER: CART
+// ══════════════════════════════════════════
+function renderCart() {
+  const r = state.currentRestaurant;
+  const menu = r ? r.menu : [];
+  const entries = Object.keys(state.cart).map(id => ({ item: menu.find(m => m.id === id), qty: state.cart[id] })).filter(e => e.item);
+
+  document.getElementById('cart-sub').textContent = cartCount() + ' món · ' + r.name;
+
+  document.getElementById('cart-list').innerHTML = entries.length ? entries.map(e => `
+    <div class="cart-item">
+      <span class="cart-item-emoji">${e.item.emoji}</span>
+      <span class="cart-item-name">${e.item.name}</span>
+      <div class="qty-stepper">
+        <button onclick="changeQty('${e.item.id}',-1)">−</button>
+        <div class="qty-num">${e.qty}</div>
+        <button onclick="changeQty('${e.item.id}',1)">+</button>
+      </div>
+      <span class="cart-item-price">${fmt(e.item.price * e.qty)}</span>
+    </div>
+  `).join('') : `<div style="text-align:center;padding:20px;color:#8e8e93;font-size:11px;">Giỏ hàng trống — quay lại menu để chọn món.</div>`;
+
   renderFees();
+  document.getElementById('order-btn').disabled = entries.length === 0;
+  document.getElementById('order-btn').textContent = entries.length === 0 ? 'Chọn món trước' : 'Đặt hàng · ' + fmt(cartTotal());
+}
+
+function cartTotal() {
+  const subtotal = cartSubtotal();
+  const shipFee = 25000;
+  const serviceFee = Math.round(subtotal * 0.06);
+  const benefitFee = 15000;
+  const priorityFee = state.priorityOn ? 29000 : 0;
+  return subtotal + shipFee + serviceFee + benefitFee + priorityFee + state.tip;
 }
 
 function renderFees() {
-  const subtotal = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const subtotal = cartSubtotal();
   const shipFee = 25000;
-  const priorityFee = state.priorityOn ? 29000 : 0;
+  const serviceFee = Math.round(subtotal * 0.06);
   const benefitFee = 15000;
-  const total = subtotal + shipFee + priorityFee + benefitFee + state.tip;
+  const priorityFee = state.priorityOn ? 29000 : 0;
+  const total = subtotal + shipFee + serviceFee + benefitFee + priorityFee + state.tip;
 
-  document.getElementById('total-display').textContent = fmt(total);
   document.getElementById('fee-breakdown').innerHTML = `
-    <div class="fee-row"><span>Tạm tính</span><span>${fmt(subtotal)}</span></div>
+    <div class="fee-breakdown-title">Chi tiết thanh toán</div>
+    <div class="fee-row"><span>Tạm tính món</span><span>${fmt(subtotal)}</span></div>
     <div class="fee-row"><span>Phí giao hàng</span><span>${fmt(shipFee)}</span></div>
-    ${state.priorityOn ? `<div class="fee-row highlight"><span>⚡ Phí Ưu Tiên <span class="fee-tag">100% CORP</span></span><span>${fmt(priorityFee)}</span></div>` : ''}
-    <div class="fee-row"><span>Phí Phúc lợi Tài xế <span class="fee-tag">100% CORP</span></span><span>${fmt(benefitFee)}</span></div>
-    <div class="fee-row"><span>Tip tài xế</span><span>${fmt(state.tip)}</span></div>
-    <div class="fee-row total"><span>Tổng cộng</span><span>${fmt(total)}</span></div>`;
+    <div class="fee-row"><span>Phí dịch vụ<span class="fee-tag corp">→ Công ty</span></span><span>${fmt(serviceFee)}</span></div>
+    <div class="fee-row highlight"><span>Driver Benefit Fee<span class="fee-tag corp">→ Công ty</span></span><span>${fmt(benefitFee)}</span></div>
+    ${state.priorityOn ? `<div class="fee-row highlight"><span>Priority Delivery<span class="fee-tag corp">→ Công ty</span></span><span>${fmt(priorityFee)}</span></div>` : ''}
+    <div class="fee-row"><span>Tip tài xế<span class="fee-tag">→ Tài xế*</span></span><span>${fmt(state.tip)}</span></div>
+    <div class="fee-row total"><span>Tổng cộng</span><span>${fmt(total)}</span></div>
+  `;
 }
 
-function setTip(amount, btn) {
-  state.tip = amount;
+function selectTip(amt, btn) {
+  state.tip = amt;
   document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
   renderFees();
   updateTipTheftSim();
-}
-
-function updateTipTheftSim() {
-  const tipAmt = state.tip;
-  const basePay = tipAmt > 30000 ? 20000 : 70000;
-  const total = tipAmt + basePay;
-  document.getElementById('tip-sim').innerHTML = `
-    <div class="tip-sim-box">
-      <div class="ts-label">BẠN TIP (${fmt(tipAmt)})</div>
-      <div class="ts-val" style="color:var(--driver)">Base: ${fmt(basePay)}</div>
-      <div class="ts-base">Tài xế nhận: ${fmt(total)}</div>
-    </div>
-    <div class="tip-sim-box">
-      <div class="ts-label">KHÔNG TIP</div>
-      <div class="ts-val" style="color:var(--blue)">Base: ${fmt(70000)}</div>
-      <div class="ts-base">Tài xế nhận: ${fmt(70000)}</div>
-    </div>`;
+  triggerAlgo('tippredict');
+  triggerAlgo('basepay', 2000);
 }
 
 function togglePriority() {
   state.priorityOn = !state.priorityOn;
-  const toggle = document.getElementById('priority-toggle');
-  toggle.classList.toggle('on', state.priorityOn);
+  document.getElementById('priority-toggle').classList.toggle('on', state.priorityOn);
   renderFees();
-  updatePriorityReveal();
+  updatePriorityCard();
   if (state.priorityOn) {
-    addLog('warn', '[PRIORITY]', 'Flag set to TRUE — dispatch_engine IGNORING flag');
-    addLog('err', '[A/B TEST]', 'Standard orders delayed +8 min to compensate');
-    showNotif('⚡ Priority Activated', 'Flag boolean = TRUE. Dispatch logic không đổi. Standard orders bị delay nhân tạo.');
+    triggerAlgo('priority', 2200);
+    triggerAlgo('delay', 2200);
+    addLog('warn', '[PRIORITY]', 'Flag set TRUE — dispatch_engine bỏ qua, KHÔNG đổi thứ tự giao');
+    addLog('err', '[A/B TEST]', 'Đơn thường bị delay thêm +8 phút để tạo cảm giác chênh lệch');
+    showNotif('⚡ Priority đã bật', 'Cờ boolean = TRUE. Logic điều phối không đổi — đơn thường bị làm chậm nhân tạo.');
+  } else {
+    addLog('info', '[PRIORITY]', 'Flag reset về FALSE');
   }
 }
 
-function updatePriorityReveal() {
-  const pFast = document.getElementById('prio-time-fast');
-  const pSlow = document.getElementById('prio-time-slow');
+function updatePriorityCard() {
+  const el = document.getElementById('algo-priority');
+  const card = document.getElementById('card-priority');
   if (state.priorityOn) {
-    pFast.textContent = '22 phút';
-    pSlow.textContent = '34 phút';
-    document.getElementById('algo-priority').textContent = 'TRUE';
-    document.getElementById('algo-priority').style.color = 'var(--yellow)';
-    document.getElementById('algo-delay').textContent = '+12 phút';
+    el.textContent = 'TRUE'; el.style.color = 'var(--yellow)';
+    document.getElementById('algo-delay').innerHTML = '+8 phút (đơn thường)';
   } else {
-    pFast.textContent = '22 phút';
-    pSlow.textContent = '22 phút';
-    document.getElementById('algo-priority').textContent = 'FALSE';
-    document.getElementById('algo-priority').style.color = 'var(--red)';
+    el.textContent = 'FALSE'; el.style.color = 'var(--red)';
     document.getElementById('algo-delay').textContent = '+0 phút';
   }
+  card.classList.add('flash');
+  setTimeout(() => card.classList.remove('flash'), 1500);
+}
+
+function updateTipTheftSim() {
+  const tipAmt = state.tip;
+  const basePay = tipAmt >= 30000 ? 20000 : 70000;
+  const totalHigh = tipAmt + basePay;
+  document.getElementById('tip-sim').innerHTML = `
+    <div class="tip-sim-box">
+      <div class="ts-label">TIP CỦA BẠN: ${fmt(tipAmt)}</div>
+      <div class="ts-val" style="color:var(--driver, #ff453a)">Base trả trước: ${fmt(basePay)}</div>
+      <div class="ts-base">Tài xế thấy tổng: ${fmt(totalHigh)}</div>
+    </div>
+    <div class="tip-sim-box">
+      <div class="ts-label">NẾU KHÔNG TIP</div>
+      <div class="ts-val" style="color:var(--blue)">Base trả trước: ${fmt(70000)}</div>
+      <div class="ts-base">Tài xế thấy tổng: ${fmt(70000)}</div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+// DESPERATION SCORE ROSTER
+// ══════════════════════════════════════════
+function scoreColor(score) {
+  if (score >= 70) return 'var(--red)';
+  if (score >= 45) return 'var(--yellow)';
+  return 'var(--green)';
+}
+function renderDescoreList(assignedIdx = -1) {
+  const html = DRIVERS.map((d, i) => {
+    const score = Math.round(state.driverScores[i]);
+    const color = scoreColor(score);
+    const pillTxt = score >= 70 ? 'HIGH' : score >= 45 ? 'MED' : 'LOW';
+    return `
+    <div class="descore-driver ${i === assignedIdx ? 'assigned' : ''}">
+      <div class="descore-avatar">${d.emoji}</div>
+      <div class="descore-info">
+        <div class="descore-name">${d.name}<span class="descore-pill" style="background:${color}22;color:${color};border:1px solid ${color}55">${pillTxt}</span></div>
+        <div class="descore-tagline">${score >= 70 ? 'Ưu tiên nhận đơn giá thấp' : score >= 45 ? 'Tiếp cận trung bình đơn tốt' : 'Được ưu tiên đơn thu nhập cao'}</div>
+        <div class="descore-bar-track"><div class="descore-bar-fill" style="width:${score}%;background:${color}"></div></div>
+      </div>
+      <div class="descore-score" style="color:${color}">${score}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('descore-list').innerHTML = html;
+  document.getElementById('algo-desp-avg').textContent = Math.round(state.driverScores.reduce((a,b)=>a+b,0) / state.driverScores.length);
+}
+// scores drift slowly over time, simulating a live model
+setInterval(() => {
+  state.driverScores = state.driverScores.map(s => {
+    let n = s + (Math.random() * 8 - 4);
+    return Math.max(5, Math.min(97, n));
+  });
+  renderDescoreList();
+}, 4000);
+
+// ══════════════════════════════════════════
+// FEE FLOW CARDS
+// ══════════════════════════════════════════
+function renderFeeFlow(subtotal, priorityOn) {
+  const shipFee = 25000, serviceFee = Math.round(subtotal * 0.06) || 4500, benefitFee = 15000, priorityFee = priorityOn ? 29000 : 29000;
+  const rows = [
+    { name:'Phí giao hàng', paid: shipFee, driver: Math.round(shipFee*0.35), corp: shipFee - Math.round(shipFee*0.35) },
+    { name:'Phí dịch vụ', paid: serviceFee, driver: 0, corp: serviceFee },
+    { name:'Driver Benefit Fee', paid: benefitFee, driver: 0, corp: benefitFee },
+    { name:'Priority Delivery Fee', paid: priorityFee, driver: 0, corp: priorityFee },
+  ];
+  document.getElementById('fee-flow-grid').innerHTML = rows.map(r => {
+    const pDriver = Math.round(r.driver / r.paid * 100);
+    return `
+    <div class="fee-flow-card">
+      <div class="ff-name">${r.name}</div>
+      <div class="ff-row"><span class="lbl">Khách trả</span><span>${fmt(r.paid)}</span></div>
+      <div class="ff-row"><span class="lbl">→ Tài xế</span><span class="to-driver">${fmt(r.driver)}</span></div>
+      <div class="ff-row"><span class="lbl">→ Công ty giữ</span><span class="to-corp">${fmt(r.corp)}</span></div>
+      <div class="ff-bar"><div class="ff-bar-driver" style="width:${pDriver}%"></div><div class="ff-bar-corp" style="width:${100-pDriver}%"></div></div>
+    </div>`;
+  }).join('');
 }
 
 // ══════════════════════════════════════════
 // PLACE ORDER
 // ══════════════════════════════════════════
 function placeOrder() {
-  const subtotal = state.cart.reduce((s, i) => s + i.price * i.qty, 0);
+  if (cartCount() === 0) return;
+  const subtotal = cartSubtotal();
   const shipFee = 25000;
-  const priorityFee = state.priorityOn ? 29000 : 0;
+  const serviceFee = Math.round(subtotal * 0.06);
   const benefitFee = 15000;
-  const total = subtotal + shipFee + priorityFee + benefitFee + state.tip;
+  const priorityFee = state.priorityOn ? 29000 : 0;
+  const total = subtotal + shipFee + serviceFee + benefitFee + priorityFee + state.tip;
 
-  // Calculate splits
-  const corpBase = Math.round(subtotal * 0.30 + shipFee * 0.65);
-  const driverBase = state.tip > 30000 ? 20000 : 70000; // tip theft
-  const feeTotal = priorityFee + benefitFee;
-  const tipPocket = Math.max(0, state.tip - (driverBase - 20000)); // extra absorbed
-  const corpTotal = total - driverBase - Math.round(state.tip * 0.3);
-  const driverTotal = driverBase + Math.round(state.tip * 0.3);
-  const actualDriver = driverBase + Math.round(state.tip * 0.3);
+  const driverBase = state.tip >= 30000 ? 20000 : 70000;      // tip theft logic
+  const driverTip = Math.round(state.tip * 0.3);              // driver only sees 30% of tip on top
+  const actualDriver = driverBase + driverTip;
+  const feeTotal = serviceFee + benefitFee + priorityFee;
+  const corpTotal = total - actualDriver;
 
-  // Update running totals
   state.totalOrders++;
   state.totalCorp += corpTotal;
   state.totalDriver += actualDriver;
 
+  // assign a driver based on desperation score — the higher the score, the more likely assigned to THIS low/typical order
+  const weights = state.driverScores.map(s => s);
+  const weightSum = weights.reduce((a,b)=>a+b,0);
+  let r = Math.random() * weightSum, assignedIdx = 0;
+  for (let i = 0; i < weights.length; i++) { r -= weights[i]; if (r <= 0) { assignedIdx = i; break; } }
+  const assignedScore = Math.round(state.driverScores[assignedIdx]);
+
   updateRunningStats();
   updateSplitBar(total, corpTotal, actualDriver, feeTotal, state.tip);
   updateDayEarnings();
+  renderFeeFlow(subtotal, state.priorityOn);
+  renderDescoreList(assignedIdx);
 
-  // Update algo cards
+  const note = document.getElementById('assigned-note');
+  note.classList.add('show');
+  note.textContent = `→ Đơn được gán cho ${DRIVERS[assignedIdx].name} (score ${assignedScore}${assignedScore>=70?', HIGH':''}) — hệ thống ưu tiên gán tài xế điểm cao cho đơn thu nhập thấp/trung bình.`;
+
   document.getElementById('algo-base').textContent = fmt(driverBase);
-  document.getElementById('algo-base-sub').textContent =
-    state.tip > 30000
-      ? '⚠ Tip cao dự đoán → Base bị hạ thấp'
-      : '✓ Không tip dự đoán → Base cao';
+  document.getElementById('algo-base-sub').textContent = state.tip >= 30000
+    ? '⚠ Tip cao dự đoán → Base bị hạ xuống 20.000đ'
+    : '✓ Tip thấp dự đoán → Base giữ 70.000đ';
+  document.getElementById('algo-margin').textContent = Math.round(corpTotal/total*100) + '%';
 
-  // Go to tracking
+  document.getElementById('card-basepay').classList.add('flash');
+  document.getElementById('card-margin').classList.add('flash');
+  setTimeout(() => { document.getElementById('card-basepay').classList.remove('flash'); document.getElementById('card-margin').classList.remove('flash'); }, 1500);
+
+  triggerAlgo('desperation', 2400);
+  triggerAlgo('tippredict', 2000);
+  triggerAlgo('basepay', 2200);
+  triggerAlgo('feerouter', 2400);
+  if (state.priorityOn) triggerAlgo('delay', 2200);
+
+  document.getElementById('track-driver-name').textContent = DRIVERS[assignedIdx].name;
+
   goTo('screen-tracking');
   startTracking(actualDriver);
 
-  // Logs
-  addLog('warn', '[ORDER]', `New order #${state.totalOrders} — Total: ${fmt(total)}`);
-  addLog('err', '[PROFIT]', `Corp extracts: ${fmt(corpTotal)} | Driver gets: ${fmt(actualDriver)}`);
-  if (state.priorityOn) addLog('warn', '[PRIORITY]', `Fee ${fmt(priorityFee)} → Corp slush fund. Dispatch unchanged.`);
-  addLog('err', '[BENEFIT]', `"Driver Benefit Fee" ${fmt(benefitFee)} → Policy Defense budget`);
-  addLog('info', '[DESP]', `Nguyễn Văn Tài [HIGH] — assigned low-value order`);
+  addLog('warn', '[ORDER]', `Đơn mới #${state.totalOrders} — Tổng: ${fmt(total)} — Nhà hàng: ${state.currentRestaurant.name}`);
+  addLog('err', '[PROFIT]', `Công ty giữ: ${fmt(corpTotal)} | Tài xế nhận: ${fmt(actualDriver)} (${Math.round(actualDriver/total*100)}%)`);
+  if (state.priorityOn) addLog('warn', '[PRIORITY]', `Phí ${fmt(priorityFee)} → quỹ công ty. Dispatch không đổi.`);
+  addLog('err', '[BENEFIT]', `"Driver Benefit Fee" ${fmt(benefitFee)} → cost_center: POLICY_DEFENSE`);
+  addLog('info', '[DESP]', `${DRIVERS[assignedIdx].name} [score ${assignedScore}] — được gán đơn này`);
 
-  // Update driver shown amount
   document.getElementById('driver-shown-amount').textContent = fmt(actualDriver);
+
+  // reset cart for next order but keep restaurant context
+  state.cart = {};
+  updateHomeCartBadge();
 }
 
 function updateSplitBar(total, corp, driver, fee, tip) {
   const pCorp = Math.round(corp / total * 100);
   const pDriver = Math.round(driver / total * 100);
-  const pFee = Math.round(fee / total * 100);
-  const pTip = 100 - pCorp - pDriver - pFee;
+  const pFee = Math.max(0, Math.round(fee / total * 100));
+  const pTip = Math.max(0, 100 - pCorp - pDriver - pFee);
 
-  document.getElementById('seg-corp').style.width = pCorp + '%';
-  document.getElementById('seg-corp').textContent = pCorp > 8 ? pCorp + '%' : '';
-  document.getElementById('seg-driver').style.width = pDriver + '%';
-  document.getElementById('seg-driver').textContent = pDriver > 8 ? pDriver + '%' : '';
-  document.getElementById('seg-fee').style.width = pFee + '%';
-  document.getElementById('seg-fee').textContent = pFee > 8 ? pFee + '%' : '';
-  document.getElementById('seg-tip').style.width = Math.max(pTip,0) + '%';
-  document.getElementById('seg-tip').textContent = pTip > 5 ? pTip + '%' : '';
+  const segCorp = document.getElementById('seg-corp');
+  const segDriver = document.getElementById('seg-driver');
+  const segFee = document.getElementById('seg-fee');
+  const segTip = document.getElementById('seg-tip');
+
+  segCorp.style.width = pCorp + '%'; segCorp.textContent = pCorp > 8 ? pCorp + '%' : '';
+  segDriver.style.width = pDriver + '%'; segDriver.textContent = pDriver > 8 ? pDriver + '%' : '';
+  segFee.style.width = pFee + '%'; segFee.textContent = pFee > 8 ? pFee + '%' : '';
+  segTip.style.width = pTip + '%'; segTip.textContent = pTip > 5 ? pTip + '%' : '';
 
   document.getElementById('split-total').textContent = fmt(total);
   document.getElementById('leg-corp').textContent = fmt(corp);
@@ -1659,30 +1387,27 @@ function updateSplitBar(total, corp, driver, fee, tip) {
 }
 
 function updateRunningStats() {
-  document.getElementById('total-orders').textContent = state.totalOrders;
-  document.getElementById('stat-corp').textContent = fmtK(state.totalCorp) + 'đ';
-  document.getElementById('stat-driver').textContent = fmtK(state.totalDriver) + 'đ';
+  document.getElementById('hdr-orders').textContent = state.totalOrders;
+  document.getElementById('stat-orders').textContent = state.totalOrders;
+  document.getElementById('stat-corp').textContent = fmt(state.totalCorp);
+  document.getElementById('stat-driver').textContent = fmt(state.totalDriver);
   if (state.totalDriver > 0) {
-    const ratio = (state.totalCorp / state.totalDriver).toFixed(1);
-    document.getElementById('stat-ratio').textContent = ratio + ':1';
+    document.getElementById('stat-ratio').textContent = (state.totalCorp / state.totalDriver).toFixed(1) + ':1';
   }
 }
 
 function updateDayEarnings() {
-  // Simulate 30 orders/day
   const ordersPerDay = 30;
-  const avgTotal = 150000;
+  const avgTotal = Math.max(120000, cartSubtotal() * 1.6 || 150000);
   const corpDay = Math.round(ordersPerDay * avgTotal * 0.55);
-  const driverDay = Math.round(ordersPerDay * 65000 - 80000); // minus gas/depreciation
+  const driverDay = Math.max(20000, Math.round(ordersPerDay * 65000 - 80000));
 
-  document.getElementById('earns-corp').textContent = fmt(corpDay);
-  document.getElementById('earns-driver').textContent = fmt(driverDay);
-
-  const maxVal = corpDay;
-  document.getElementById('bar-corp').style.width = '90%';
+  document.getElementById('earns-corp') && (document.getElementById('earns-corp').textContent = fmt(corpDay));
+  document.getElementById('bar-corp').style.width = '92%';
   document.getElementById('bar-corp').textContent = fmt(corpDay);
-  document.getElementById('bar-drv').style.width = Math.round(driverDay / maxVal * 90) + '%';
+  document.getElementById('bar-drv').style.width = Math.max(8, Math.round(driverDay / corpDay * 92)) + '%';
   document.getElementById('bar-drv').textContent = fmt(driverDay);
+  document.getElementById('earns-note').textContent = `Công ty thu gấp ~${(corpDay/driverDay).toFixed(1)}x thu nhập ròng của tài xế cho cùng khối lượng đơn hàng, sau khi trừ xăng xe & khấu hao ước tính.`;
 }
 
 // ══════════════════════════════════════════
@@ -1692,34 +1417,40 @@ function startTracking(driverPay) {
   let eta = 22;
   const etaEl = document.getElementById('track-eta');
   const statusEl = document.getElementById('track-status');
-
   if (state.trackingInterval) clearInterval(state.trackingInterval);
 
-  const statuses = [
-    'Tài xế đang lấy đơn...',
-    'Đơn đã được lấy ✓',
-    'Đang trên đường giao...',
-    'Sắp đến nơi!',
-    'Đã giao thành công 🎉',
-  ];
-  let sIdx = 0;
+  ['step2dot','step2text','step3dot','step3text','step4dot','step4text','step5dot','step5text'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.className = id.includes('dot') ? 'step-dot' : 'step-text';
+  });
+  document.getElementById('step2dot').className = 'step-dot done';
+  document.getElementById('step2text').className = 'step-text done';
+  document.getElementById('step3dot').className = 'step-dot active';
+  document.getElementById('step3text').className = 'step-text active';
 
+  const statuses = ['Tài xế đang lấy đơn...', 'Đơn đã được lấy ✓', 'Đang trên đường giao...', 'Sắp đến nơi!', 'Đã giao thành công 🎉'];
+  let sIdx = 0;
   state.trackingInterval = setInterval(() => {
     eta = Math.max(0, eta - 1);
     etaEl.innerHTML = eta + ' <span>phút</span>';
-    if (eta % 5 === 0 && sIdx < statuses.length - 1) {
-      sIdx++;
-      statusEl.textContent = statuses[sIdx];
-    }
-    if (eta === 10) {
+    if (eta % 5 === 0 && sIdx < statuses.length - 1) { sIdx++; statusEl.textContent = statuses[sIdx]; }
+    if (eta === 12) {
       document.getElementById('step3dot').className = 'step-dot done';
       document.getElementById('step3text').className = 'step-text done';
       document.getElementById('step4dot').className = 'step-dot active';
       document.getElementById('step4text').className = 'step-text active';
     }
+    if (eta === 2) {
+      document.getElementById('step4dot').className = 'step-dot done';
+      document.getElementById('step4text').className = 'step-text done';
+      document.getElementById('step5dot').className = 'step-dot active';
+      document.getElementById('step5text').className = 'step-text active';
+    }
     if (eta === 0) {
       clearInterval(state.trackingInterval);
-      showNotif('📦 Đã giao thành công', `Tài xế nhận: ${fmt(driverPay)}. Công ty đã kiếm khoảng ${fmt(driverPay * 2.8)} từ đơn hàng này.`);
+      document.getElementById('step5dot').className = 'step-dot done';
+      document.getElementById('step5text').className = 'step-text done';
+      showNotif('📦 Đã giao thành công', `Tài xế nhận: ${fmt(driverPay)}. Công ty thu khoảng ${fmt(driverPay * 2.4)} từ đơn này.`);
     }
   }, 1000);
 }
@@ -1737,6 +1468,7 @@ function addLog(type, category, msg) {
   entry.innerHTML = `<span class="log-time">${t}</span><span class="log-type">${category}</span><span class="log-msg">${msg}</span>`;
   log.appendChild(entry);
   log.scrollTop = log.scrollHeight;
+  while (log.children.length > 120) log.removeChild(log.firstChild);
 }
 
 // ══════════════════════════════════════════
@@ -1756,29 +1488,33 @@ function showNotif(title, body) {
 // AUTO BACKGROUND LOGS
 // ══════════════════════════════════════════
 const bgLogs = [
-  ['info', '[DESP]', 'Recalculating desperation_score for 1,247 active drivers'],
-  ['warn', '[TIP]', 'Predictive model: user #4721 classified as HIGH_TIPPER'],
-  ['err', '[BASE_PAY]', 'Lowering base offer for high-tip user: 70k → 20k'],
-  ['warn', '[LOBBY]', 'Policy Defense fund received: 45,000,000đ today'],
-  ['info', '[A/B]', 'Standard delay injected: 847 orders slowed by avg 9.2 min'],
-  ['err', '[BENEFIT]', 'Driver Benefit Fee routed to cost_center: POLICY_DEFENSE'],
-  ['warn', '[DESP]', 'Driver #Tài flagged HIGH — rerouting premium orders away'],
-  ['info', '[CORP]', 'Today margin: 63.2% of GMV captured'],
-  ['err', '[TIP]', 'Tip absorption: $12,450 tip offset against base pay savings'],
-  ['warn', '[SPRINT]', 'PM meeting: squeeze 0.4% margin from "human assets" Q3'],
+  ['info', '[DESP]', 'Recalculating desperation_score cho 1.247 tài xế đang online'],
+  ['warn', '[TIP]', 'Predictive model: khách #4721 phân loại HIGH_TIPPER'],
+  ['err', '[BASE_PAY]', 'Hạ base offer cho khách tip cao: 70k → 20k'],
+  ['warn', '[LOBBY]', 'Quỹ "Policy Defense" nhận thêm: 45.000.000đ hôm nay'],
+  ['info', '[A/B]', 'Delay đơn thường: 847 đơn bị làm chậm trung bình 9.2 phút'],
+  ['err', '[BENEFIT]', 'Driver Benefit Fee được route tới cost_center: POLICY_DEFENSE'],
+  ['warn', '[DESP]', 'Tài xế điểm HIGH bị định tuyến tránh xa đơn giá trị cao'],
+  ['info', '[CORP]', 'Biên lợi nhuận hôm nay: 63.2% GMV'],
+  ['err', '[TIP]', 'Tip absorption: 12.450.000đ tip bị khấu trừ vào base pay'],
+  ['warn', '[SPRINT]', 'Họp PM: mục tiêu tăng thêm 0.4% margin từ "human assets" Q3'],
+  ['ok', '[SYSTEM]', 'Tất cả 6 engine hoạt động bình thường'],
 ];
 let bgIdx = 0;
-setInterval(() => {
-  const l = bgLogs[bgIdx % bgLogs.length];
-  addLog(l[0], l[1], l[2]);
-  bgIdx++;
-}, 3500);
+setInterval(() => { addLog(...bgLogs[bgIdx % bgLogs.length]); bgIdx++; }, 3500);
 
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
+initAlgoMonitor();
+renderHome();
+renderDescoreList();
+renderFeeFlow(0, false);
 updateTipTheftSim();
-updatePriorityReveal();
+updatePriorityCard();
+updateRunningStats();
+updateDayEarnings();
+addLog('ok', '[BOOT]', 'DeliverX internal dashboard khởi động — 6 thuật toán đã nạp');
 </script>
 </body>
-</html>
+  </html>
